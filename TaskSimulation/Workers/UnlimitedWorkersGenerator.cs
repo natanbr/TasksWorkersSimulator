@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace TaskSimulation
 {
-    class EventGenerator
+    public class UnlimitedWorkersGenerator : IWorkersGenerator
     {
+        public Worker GetNextWorker()
+        {
+            return new Worker();
+        }
     }
 }

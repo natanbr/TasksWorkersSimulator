@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace TaskSimulation
 {
-    class Simulator
+    interface IChooseWorkerAlgo
     {
+        List<Worker> ChooseWorkers(List<Worker> activeWorkers, int choose);
     }
 }
