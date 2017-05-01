@@ -35,18 +35,17 @@ namespace TaskSimulationCmd
         const int NUM_OF_EXECUTIONS = 1;
         static readonly ExecutionSummary[] _summaries = new ExecutionSummary[NUM_OF_EXECUTIONS];
 
-        const int INITIAL_NUM_OF_WORKERS = 1;
-        const int MAX_SIMULATION_TIME    = 10;
+        const int INITIAL_NUM_OF_WORKERS = 10;
+        const double MAX_SIMULATION_TIME    = 10;
 
         static void Main(string[] args)
         {
-            DistFactory.TaskArrivalRate =   new NormalDistTest(mean: 5, stddev: 4, test: 2);
-            DistFactory.TaskCompliteRate =  new NormalDistTest(mean: 5, stddev: 4, test: 5);
-            DistFactory.WorkerArrivalRate = new NormalDistTest(mean: 5, stddev: 4, test: 2);
-            DistFactory.WorkerLeftRate =    new NormalDistTest(mean: 5, stddev: 4, test: 15);
+            DistFactory.TaskArrivalTime   = new ContinuousUniform(1, 3);
+            DistFactory.WorkerArrivalTime = new ContinuousUniform(5, 10);
 
-            DistFactory.FeedbackDistribution = new Normal(5, 2);
-            DistFactory.QualityGrade =      new Normal(5, 2);
+            DistFactory.FeedbackDistribution = new ContinuousUniform(1, 10);
+            DistFactory.QualityGrade =         new ContinuousUniform(1, 10);
+            DistFactory.ResponseTime =         new ContinuousUniform(2, 10);
 
             DistFactory.GradeSystem = new OriginalGradeCalc();
 

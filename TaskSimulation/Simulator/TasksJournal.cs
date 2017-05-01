@@ -6,56 +6,45 @@ namespace TaskSimulation.Simulator
 {
     public class TasksJournal : ISimulatable
     {
-        private List<Task> _waitForWorkers;
-        private List<Task> _activeTasks;
-
-        public event Action<Task> OnAvailableTask;
+        private List<Task> _unassignedTasks;
 
         public TasksJournal()
         {
-            _waitForWorkers = new List<Task>();
-            _activeTasks = new List<Task>();
+            _unassignedTasks = new List<Task>();
         }
 
-        public void Update()
+        public void Update(TaskArrivalEvent @event)
         {
-            // Generate new event (Strategy)
-            var addTask = DistFactory.TaskArrivalRate.Test();
+            var task = @event.Task;
+            _unassignedTasks.Add(task);
 
-            if (!addTask) return;
-            
-            // Create task
-            var task = new Task();
-            _waitForWorkers.Add(task);
-
-            Log.Event($"T> {task} Arrived");
-
-            // Register to assigned tasks
-            task.OnTaskAssigned += assignedTask =>
+            task.OnTaskAssigned += _ =>
             {
-                _waitForWorkers.Remove(assignedTask);
-                _activeTasks.Add(assignedTask);
-            };
-            
-            // Register clear task event
-            task.OnTaskComplite += completedTask =>
-            {
-                //Log.I($"<T< {completedTask} from jurnal");
-                _activeTasks.Remove(completedTask);
+                _unassignedTasks.Remove(task);
             };
 
-            // Notify about available event
-            NotifyAvailableEvent(task);
+            //Log.Event($"T> {task} Arrived");
         }
 
-        private void NotifyAvailableEvent(Task task)
+        public void Update(TaskFinishedEvent @event)
         {
-            OnAvailableTask?.Invoke(task);
+            var task = @event.Task;
+
+            _unassignedTasks.Remove(task);
+            task.Finished();
         }
 
-        public Task FindAvailableTask()
+        public void Update(WorkerArrivalEvent @event)
         {
-            return _waitForWorkers?.Count > 0 ? _waitForWorkers?[0] : null;
+            if (_unassignedTasks.Count > 0)
+            {
+                Log.I("There are more tasks then workers");
+                @event.Worker.Assign(_unassignedTasks[0]);
+            }
         }
+
+        public void Update(WorkerLeaveEvent @event)
+        {
+        }       
     }
 }

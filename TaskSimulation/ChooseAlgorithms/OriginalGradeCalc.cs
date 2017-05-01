@@ -13,7 +13,7 @@ namespace TaskSimulation.ChooseAlgorithms
         private const int INITIAL_GRADE = 5;
        
 
-        public int GetFinalGrade(Grade grade)
+        public double GetFinalGrade(Grade grade)
         {
             var sum = grade.FeedbackGrade + grade.QualityGrade + grade.ResponseGrade + grade.NumberOfTasksGrade;
             var totalGrade = sum / Grade.NUMBER_OF_VARS;
@@ -21,21 +21,21 @@ namespace TaskSimulation.ChooseAlgorithms
             return totalGrade;
         }
 
-        public Grade TaskAdded(Grade grade, int taskInQueue)
+        public Grade TaskAdded(Grade grade)
         {
-            grade.NumberOfTasksGrade = taskInQueue;
+            grade.NumberOfTasksGrade--;
             grade.TotalGrade = GetFinalGrade(grade);
 
             return grade;
         }
 
-        public Grade TaskRemoved(Grade grade, int taskInQueue, long responseTime)
+        public Grade TaskRemoved(Grade grade, double responseTime)
         {
             grade.NumberOfTasksGrade++;
             grade.ResponseGrade = (int)((_runningAvrg) * (RESPONCE_TIME - responseTime) + (1 - _runningAvrg) * grade.ResponseGrade);
             grade.TotalGrade = GetFinalGrade(grade);
 
-            Log.D($"Grade Update: TaskRemoved: (N:{taskInQueue}, R:[t={responseTime}]->{grade.ResponseGrade})");
+            Log.D($"Grade Update: TaskRemoved: (N:{grade.NumberOfTasksGrade}, R:[t={responseTime}]->{grade.ResponseGrade})");
 
             return grade;
         }

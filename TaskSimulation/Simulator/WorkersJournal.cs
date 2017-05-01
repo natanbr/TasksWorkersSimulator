@@ -13,41 +13,16 @@ namespace TaskSimulation.Simulator
     class WorkersJournal : ISimulatable
     {
         private readonly List<Worker> _activeWorkers;
-        private readonly List<Worker> _idleWorkers;
         private readonly IWorkersGenerator _workersGenerator;
-        public event Action<Worker> OnNewWorkerArrived;
+        //public event Action<Worker> OnNewWorkerArrived;
 
         public WorkersJournal(int initialNumOfWorkers)
         {
             _workersGenerator = new WorkersGenerator();
             _activeWorkers = new List<Worker>();
-            _idleWorkers = new List<Worker>();
 
             for (var i = 0; i < initialNumOfWorkers; i++)
                 AddNewWorker();
-        }
-
-        public void Update()
-        {
-            // Generate new Worker
-            var addWorker= DistFactory.WorkerArrivalRate.Test();
-
-            //DistFactory.WorkerArrivalRate.PrintLastCalc("Add worker");
-
-            if (addWorker)
-            {
-                var worker = AddNewWorker();
-
-                CallNewWorkerArrived(worker);
-            }
-
-            foreach (var worker in _activeWorkers)
-            {
-                worker.Update();
-            }
-
-            // iterate over the workers and update the status
-            UpdateWorkers();
         }
 
         private Worker AddNewWorker()
@@ -62,58 +37,76 @@ namespace TaskSimulation.Simulator
 
             _activeWorkers.Add(newWorker);
 
-            Log.Event($"W> Adding new {newWorker}");
+            //Log.Event($"W> Adding new {newWorker}");
 
             return newWorker;
         }
 
-        private void UpdateWorkers()
-        {
-            for (var i = _activeWorkers.Count - 1; i >= 0; i--)
-            {
-                var worker = _activeWorkers[i];
-                if (!worker.WorkerStatus)
-                {
-                    _activeWorkers.RemoveAt(i);
-                    _idleWorkers.Add(worker);
-                }
-            }
-
-            for (var i = _idleWorkers.Count - 1; i >= 0; i--)
-            {
-                var worker = _idleWorkers[i];
-                if (worker.WorkerStatus)
-                {
-                    _idleWorkers.RemoveAt(i);
-                    _activeWorkers.Add(worker);
-                }
-            }
-        }
-
-        public void AssignTask(Task task)
+        public List<Worker> AssignTask(Task task)
         {
             if (_activeWorkers.Count <= 0)
-                return;
+                return null;
 
             var chooseAlgo = new ChooseHighestGrade(); 
             var workers = chooseAlgo.ChooseWorkers(_activeWorkers, 1);  // TODO assumption: chose only 1 worker
 
             // Assign the task to each worker
-            workers.ForEach(worker =>
+            workers?.ForEach(worker =>
             {
                 worker?.Assign(task);
                 Log.Event($"{worker} has been assigned to {task}");
             });
+
+            return workers;
         }
          
-        protected virtual void CallNewWorkerArrived(Worker worker)
-        {
-            OnNewWorkerArrived?.Invoke(worker);
-        }
 
         public List<Worker> ActiveWorkers
         {
             get { return _activeWorkers; }
+        }
+
+        public void Update(WorkerArrivalEvent @event)
+        {
+            var worker = @event.Worker;
+
+            _activeWorkers.Add(worker);
+
+            var simClock = SimulateServer.SimulationClock;
+            var finishIn = 5; // TODO
+            @event.EventMan.AddEvent(new WorkerLeaveEvent(worker, simClock + finishIn));
+        }
+
+        public void Update(WorkerLeaveEvent @event)
+        {
+            // TODO for each worker task in the list reassign them
+
+            _activeWorkers.Remove(@event.Worker);
+        }
+
+        public void Update(TaskArrivalEvent @event)
+        {
+            var task = @event.Task;
+
+            var assignedWorkers = AssignTask(task);
+
+            assignedWorkers.ForEach(worker =>
+            {
+                // Assumption the simulator clock is always updated to current time
+                var simClock = SimulateServer.SimulationClock;
+
+                // TODO calc using worker's data
+                var finishIn = DistFactory.ResponseTime.Sample();
+                @event.EventMan.AddEvent(new TaskFinishedEvent(task, worker, simClock + finishIn));
+            });
+        }
+
+        public void Update(TaskFinishedEvent @event)
+        {
+            var worker = @event.Worker;
+            var task = @event.Task;
+
+            worker.RemoveTask(task);
         }
 
     }

@@ -4,7 +4,7 @@ using TaskSimulation.Results;
 
 namespace TaskSimulation.Simulator
 {
-    public class Task : ISimulatable, IStatisticCollectorVisitor
+    public class Task
     {
         public static int TASK_ID = 0;
         public const int NOT_STARTED = -1;
@@ -12,20 +12,15 @@ namespace TaskSimulation.Simulator
 
         private int _eventCode;
 
-        public long CreatedTime { get; private set; }
-        public long StartTime { get; private set; }
+        public double CreatedTime { get; private set; }
+        public double StartTime { get; private set; }
 
-        public long EndTime { get; private set; }
+        public double EndTime { get; private set; }
 
-        //public List<Worker> Assigned { get; private set; }
+        public event Action<Worker> OnTaskAssigned;
 
-        public event Action<Task> OnTaskComplite;
-        public event Action<Task> OnTaskAssigned;
-
-        public Task()
+        public Task(TaskArrivalEvent @event)
         {
-           // Assigned = new List<Worker>();
-
             EndTime = NOT_STARTED;
             StartTime = NOT_STARTED;
             CreatedTime = SimulateServer.SimulationClock;
@@ -34,49 +29,20 @@ namespace TaskSimulation.Simulator
 
         public void Assign(Worker worker)
         {
-            //Assigned.Add(worker);
-
             StartTime = SimulateServer.SimulationClock;
 
-            //PrintAssignment();
-
-            OnTaskAssigned?.Invoke(this);
+            OnTaskAssigned?.Invoke(worker);
         }
 
-        /*private void PrintAssignment()
+        public void Finished()
         {
-            Console.Write($"{this} Assigned to");
+            EndTime = SimulateServer.SimulationClock;
+        }
 
-            foreach (var worker in Assigned)
-                Console.Write($"{worker} ");
-        }*/
 
         public override string ToString()
         {
             return $"Task: {_eventCode}" ;
-        }
-
-        public void Update()
-        {
-            if (StartTime == SimulateServer.SimulationClock)
-                return; // The task has been just created, no need to update
-
-            var isComplite = DistFactory.TaskCompliteRate.Test();
-
-            if (isComplite)
-            {
-                // Log.D($"<T< {this} finished");
-
-                EndTime = SimulateServer.SimulationClock;
-
-                OnTaskComplite?.Invoke(this);
-            }
-
-        }
-
-        public void Accept(IVisitor visitor)
-        {
-            visitor.Visit(this);
         }
     }
 }

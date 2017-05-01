@@ -58,9 +58,16 @@
     <Compile Include="Distribution\ExtensionMethods.cs" />
     <Compile Include="ChooseAlgorithms\IChooseWorkerAlgo.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="PriorityQueues.cs" />
     <Compile Include="Results\ExecutionSummary.cs" />
     <Compile Include="Results\IStatisticCollectorVisitor.cs" />
     <Compile Include="Results\WorkerUtilization.cs" />
+    <Compile Include="Simulator\Events\AEvent.cs" />
+    <Compile Include="Simulator\Events\WorkerLeaveEvent.cs" />
+    <Compile Include="Simulator\Events\WorkerArrivalEvent.cs" />
+    <Compile Include="Simulator\Events\TaskFinishedEvent.cs" />
+    <Compile Include="Simulator\Events\SimulationEventMan.cs" />
+    <Compile Include="Simulator\Events\TaskArrivalEvent.cs" />
     <Compile Include="Workers\Grade.cs" />
     <Compile Include="Workers\IWorkersGenerator.cs" />
     <Compile Include="Simulator\Task.cs" />

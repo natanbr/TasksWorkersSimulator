@@ -2,7 +2,7 @@
 {
     public interface IStatisticCollectorVisitor
     {
-        void Accept(IVisitor visitor);
+        void Accept(ISimulatable visitor);
 
     }
 }

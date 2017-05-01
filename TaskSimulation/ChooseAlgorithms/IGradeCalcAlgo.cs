@@ -4,11 +4,12 @@ namespace TaskSimulation.ChooseAlgorithms
 {
     public interface IGradeCalcAlgo
     {
-        int GetFinalGrade(Grade worker);
+        double GetFinalGrade(Grade worker);
 
         int InitialGrade();
-        Grade TaskAdded(Grade grade, int taskInQueue);
-        Grade TaskRemoved(Grade grade, int taskInQueue, long responseTime);
+
+        Grade TaskAdded(Grade grade);
+        Grade TaskRemoved(Grade grade, double responseTime);
 
         Grade GenerateRandomGrade(Grade worker);
         int GetMaxNumberOfTasks();

@@ -9,10 +9,10 @@ namespace TaskSimulation.Results
     public class ExecutionSummary
     {
         public int Seed;
-        public int ExecutionTime;
+        public double ExecutionTime;
 
-        public decimal TotalWorkersUtilization;
-        public decimal TotalSystemUtilization;
+        public double TotalWorkersUtilization;
+        public double TotalSystemUtilization;
         public int FinishedTasksForSingleExecution;
         public int TotalTasksForSingleExecution;
 

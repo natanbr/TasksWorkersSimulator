@@ -6,16 +6,24 @@ using Task = TaskSimulation.Simulator.Task;
 
 namespace TaskSimulation.Results
 {
-    public interface IVisitor
-    {
-        void Visit(Task task);
-        void Visit(Worker worker);
-    }
-
-    public class Utilization : IVisitor
+    public class Utilization : ISimulatable
     {
         public List<Task> _tasks;
         public List<Worker> _workers;
+
+        public void Update(TaskArrivalEvent @event)
+        {
+            _tasks.Add(@event.Task);
+        }
+
+        public void Update(TaskFinishedEvent @event) { }
+
+        public void Update(WorkerArrivalEvent @event)
+        {
+            _workers.Add(@event.Worker);
+        }
+
+        public void Update(WorkerLeaveEvent @event) { }
 
         public Utilization()
         {
@@ -47,11 +55,11 @@ namespace TaskSimulation.Results
             return totalTasks;
         }
 
-        public decimal GetTotalWorkersUtilization()
+        public double GetTotalWorkersUtilization()
         {
             var workersWorked = _workers.Sum(w => w.Utilization.BusyTime);
             var workersTotalTime = _workers.Sum(w => w.Utilization.TotalTime);
-            var workerUtilization = (decimal)workersWorked / workersTotalTime;
+            var workerUtilization = workersWorked / workersTotalTime;
             Log.I($"Workers utilization is {workersWorked}/{workersTotalTime} = {workerUtilization*100:N2}%");
             return workerUtilization;
         }
@@ -61,13 +69,15 @@ namespace TaskSimulation.Results
         /// If all the workers were working all the time, the system utilization has been 100%
         /// </summary>
         /// <returns></returns>
-        public decimal GetSystemUtilization()
+        public double GetSystemUtilization()
         {
             var systemWorked = _workers.Sum(w => w.Utilization.BusyTime);
-            var systemUtilization = (decimal)((decimal)systemWorked /_workers.Count)/SimulateServer.SimulatorMaxRunTime;
+            var systemUtilization = (systemWorked /_workers.Count)/SimulateServer.SimulatorMaxRunTime;
             Log.I($"System utilization is: " +
                   $"({systemWorked}/{_workers.Count})/{SimulateServer.SimulatorMaxRunTime} = {systemUtilization * 100:N2}%");
             return systemUtilization;
         }
+
+
     }
 }

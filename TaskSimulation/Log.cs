@@ -39,7 +39,7 @@ namespace TaskSimulation
 
         public static void Event(string msg = "")
         {
-            Instance.Info("-> " + msg, ConsoleColor.Green);
+            Instance.Info("" + msg, ConsoleColor.Green);
         }
 
         public static void Err(string msg = "")

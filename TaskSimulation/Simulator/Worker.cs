@@ -7,7 +7,7 @@ using TaskSimulation.Workers;
 
 namespace TaskSimulation
 {
-    public class Worker :ISimulatable, IStatisticCollectorVisitor
+    public class Worker
     {
         public static int WORKER_ID = 0;
 
@@ -16,7 +16,7 @@ namespace TaskSimulation
         public bool WorkerStatus { get; private set; }
         public Grade Grade { get; set; }
         public WorkerUtilization Utilization;
-        public event Action<Worker> OnWorkerNotAvailable;
+        //public event Action<Worker> OnWorkerNotAvailable;
 
         public Worker()
         {
@@ -32,16 +32,14 @@ namespace TaskSimulation
                 QualityGrade = DistFactory.GradeSystem.InitialGrade(),
                 ResponseGrade = DistFactory.GradeSystem.InitialGrade(),
                 NumberOfTasksGrade = DistFactory.GradeSystem.GetMaxNumberOfTasks(),
-                TotalGrade = DistFactory.GradeSystem.InitialGrade(),
             };
+
+            Grade.TotalGrade = DistFactory.GradeSystem.GetFinalGrade(Grade);
         }
 
         public void Assign(Task task)
         {
             AddTask(task);
-
-            // Remove it when finished its execution
-            task.OnTaskComplite += RemoveTask;
         }
 
         private void AddTask(Task task)
@@ -49,40 +47,16 @@ namespace TaskSimulation
             // Add the task
             _queuedTasks.Add(task);
             task.Assign(this);
-            Grade = DistFactory.GradeSystem.TaskAdded(Grade, _queuedTasks.Count);
+            Grade = DistFactory.GradeSystem.TaskAdded(Grade);
         }
 
-        private void RemoveTask(Task task)
+        public void RemoveTask(Task task)
         {
             Log.Event($"{this} finished {task}, duration: {task.EndTime - task.StartTime}");
             _queuedTasks.Remove(task);
 
-            //Grade = DistFactory.GradeSystem.TaskRemoved(Grade);
-            Grade = DistFactory.GradeSystem.TaskRemoved(Grade, _queuedTasks.Count, task.EndTime - task.StartTime);
+            Grade = DistFactory.GradeSystem.TaskRemoved(Grade, task.EndTime - task.StartTime);
             Grade = DistFactory.GradeSystem.GenerateRandomGrade(Grade);
-        }
-
-        /// <summary>
-        /// todo talk if the order of comiltte and leave is important
-        /// </summary>
-        public void Update()
-        {
-            // Generate is work finished 
-            var isWorkerLeft = DistFactory.WorkerLeftRate.Test();
-
-            if (isWorkerLeft)
-            {
-                // DistFactory.WorkerLeftRate.PrintLastCalc("Worker left");
-                Log.Event($"W< {this} left");
-                WorkerStatus = false;
-                OnWorkerNotAvailable?.Invoke(this);
-                return;
-            }
-
-            // Update tasks
-            UpdateTasks();
-
-            UpdateStatistics();
         }
 
         // TODO move out from here
@@ -93,25 +67,11 @@ namespace TaskSimulation
             else Utilization.BusyTime++;
         }
 
-        private void UpdateTasks()
-        {
-            if (_queuedTasks.Count <= 0)
-                return;
-
-            // Assumption: worker works only on one task at a time.
-            var nextTask = _queuedTasks[0];
-            nextTask.Update();
-        }
-
         public override string ToString()
         {
             return $"Worker: {ID} ";
         }
 
-        public void Accept(IVisitor visitor)
-        {
-            visitor.Visit(this);
-        }
     }
 
     

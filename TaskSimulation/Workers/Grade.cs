@@ -4,16 +4,16 @@
     {
         public const int NUMBER_OF_VARS = 4;
 
-        public int TotalGrade;
+        public double TotalGrade;
 
-        public int ResponseGrade;
-        public int FeedbackGrade;
-        public int QualityGrade;
+        public double ResponseGrade;
+        public double FeedbackGrade;
+        public double QualityGrade;
         public int NumberOfTasksGrade;
 
         public override string ToString()
         {
-            return $"Grade: {TotalGrade} (R:{ResponseGrade},F:{FeedbackGrade},Q:{QualityGrade},N:{NumberOfTasksGrade})";
+            return $"Grade: {TotalGrade,-4:0.##} (R:{ResponseGrade,-4:0.##},F:{FeedbackGrade,-4:0.##},Q:{QualityGrade,-4:0.##},N:{NumberOfTasksGrade})";
         }
     }
 }

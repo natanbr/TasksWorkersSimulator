@@ -2,10 +2,10 @@
 {
     public class WorkerUtilization
     {
-        public int BusyTime { get; set; }
+        public double BusyTime { get; set; }
 
-        public int FreeTime { get; set; }
+        public double FreeTime { get; set; }
 
-        public int TotalTime => BusyTime + FreeTime;
+        public double TotalTime => BusyTime + FreeTime;
     }
 }

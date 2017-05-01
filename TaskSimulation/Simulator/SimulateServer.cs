@@ -5,16 +5,17 @@ namespace TaskSimulation.Simulator
 {
     public class SimulateServer
     {
-        public static long SimulationClock { get; private set; } // TNOW
+        public static double SimulationClock { get; private set; } // TNOW
 
         private TasksJournal _tasksJournal;
         private WorkersJournal _workersJournal;
-        public static int SimulatorMaxRunTime { get; private set; }
-
+        public static double SimulatorMaxRunTime { get; private set; }
+        private SimulationEventMan _simulationEvents;
         public Utilization Utilization { get; private set; }
 
-        public SimulateServer(int maxSimulationTime = Int32.MaxValue)
+        public SimulateServer(double maxSimulationTime = Int32.MaxValue)
         {
+            _simulationEvents = new SimulationEventMan();
             SimulationClock = 0;
             SimulatorMaxRunTime = maxSimulationTime;
             
@@ -25,53 +26,37 @@ namespace TaskSimulation.Simulator
         {
             Task.TASK_ID = 0;
             Worker.WORKER_ID = 0;
+
+            _simulationEvents.InitializeEvents(1, 1);
+
             _tasksJournal = new TasksJournal();
             _workersJournal = new WorkersJournal(initialNumOfWorkers);
         }
 
         public void Start()
         {
-            _tasksJournal.OnAvailableTask += task =>
+            var nextEvent = _simulationEvents.GetNextEvent();
+
+            while (nextEvent.ArriveTime < SimulatorMaxRunTime)
             {
-                // Add statistics collector to task
-                task.Accept(Utilization);
+                // Update the simulation clock to the new event time
+                SimulationClock = nextEvent.ArriveTime;
+                Log.I();
+                Log.Event( $"{nextEvent} at time {SimulationClock}");
 
-                //Log.D($"Notify task available ({task})");
-                _workersJournal.AssignTask(task);
+                nextEvent.Accept(_tasksJournal);
+                nextEvent.Accept(_workersJournal);
+                nextEvent.Accept(Utilization);
 
-                task.OnTaskComplite += _ =>
-                {
-                    // remove the task from the workes
-                    // update the workers grades
-                };
+                nextEvent = _simulationEvents.GetNextEvent();
 
-            };
-
-            _workersJournal.OnNewWorkerArrived += worker =>
-            {
-                // Add statistics collector to worker
-                worker.Accept(Utilization);
-
-                // In case there are more tasks them workers assign 
-                var task = _tasksJournal.FindAvailableTask();
-                if (task != null) worker.Assign(task);
-            };
-
-            for (;SimulationClock < SimulatorMaxRunTime; SimulationClock++)
-            {
                 PrintSimulationState();
-
-                // Task update first to avoid false worker idle between creation and receiving task
-                _tasksJournal.Update();
-                _workersJournal.Update(); 
             }
-
         }
 
         public void PrintSimulationState()
         {
-            Log.I();
-            Log.I($"*** {SimulationClock:000}/{SimulatorMaxRunTime:000} ***");
+            Log.I($"*** {SimulationClock,-5:##0.##}/{SimulatorMaxRunTime,-5:##0.##} ***");
 
             _workersJournal.ActiveWorkers.ForEach(w =>
             {

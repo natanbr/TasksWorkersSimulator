@@ -47,13 +47,11 @@ namespace GraphicalResults
 
         public void MainExec()
         {
-            DistFactory.TaskArrivalRate = new NormalDistTest(mean: 5, stddev: 4, test: 2);
-            DistFactory.TaskCompliteRate = new NormalDistTest(mean: 5, stddev: 4, test: 5);
-            DistFactory.WorkerArrivalRate = new NormalDistTest(mean: 5, stddev: 4, test: 5);
-            DistFactory.WorkerLeftRate = new NormalDistTest(mean: 5, stddev: 4, test: 7);
 
             DistFactory.FeedbackDistribution = new Normal(10, 10);
             DistFactory.QualityGrade = new Normal(10, 10);
+
+            DistFactory.TaskArrivalTime = new Exponential(20);
 
             DistFactory.GradeSystem = new OriginalGradeCalc();
                         
