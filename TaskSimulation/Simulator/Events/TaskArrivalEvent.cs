@@ -17,10 +17,5 @@ namespace TaskSimulation.Simulator
         {
             visitor.Update(this);
         }
-
-        public override string ToString()
-        {
-            return $"T> {Task}";
-        }
     }
 }

@@ -36,7 +36,7 @@ namespace TaskSimulationCmd
         static readonly ExecutionSummary[] _summaries = new ExecutionSummary[NUM_OF_EXECUTIONS];
 
         const int INITIAL_NUM_OF_WORKERS = 10;
-        const double MAX_SIMULATION_TIME    = 10;
+        const double MAX_SIMULATION_TIME    = 1;
 
         static void Main(string[] args)
         {

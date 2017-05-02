@@ -33,7 +33,7 @@ namespace TaskSimulation.Simulator
 
         public void AddEvent(AEvent newEvent)
         {
-            Log.D($"Adding event {newEvent} at time {newEvent.ArriveTime,-7:##0.###}");
+            Log.D($"Adding {newEvent} at time: {newEvent.ArriveTime,-7:##0.###}");
             _events.Enqueue(newEvent);
         }
 

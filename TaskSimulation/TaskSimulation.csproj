@@ -57,6 +57,7 @@
     <Compile Include="Distribution\DistFactory.cs" />
     <Compile Include="Distribution\ExtensionMethods.cs" />
     <Compile Include="ChooseAlgorithms\IChooseWorkerAlgo.cs" />
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="PriorityQueues.cs" />
     <Compile Include="Results\ExecutionSummary.cs" />

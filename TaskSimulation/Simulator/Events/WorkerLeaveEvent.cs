@@ -16,9 +16,9 @@ namespace TaskSimulation.Simulator
             visitor.Update(this);
         }
 
-        public override string ToString()
+       /* public override string ToString()
         {
-            return $"<W {Worker}";
-        }
+            return $"{this.GetType().Name.SpaceCapitals()}";
+        }*/
     }
 }

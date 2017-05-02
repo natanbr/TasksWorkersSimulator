@@ -1,18 +1,17 @@
 ﻿using System.Collections.Generic;
-using TaskSimulation.Distribution;
 
 namespace TaskSimulation.Workers
 {
     public class WorkersGenerator : IWorkersGenerator
     {
         private const int INITIAL_NUM_OF_WORKERS = 20;
-
-        public List<Worker> WokersPool { get; private set; }
+        private long _workerID = 0;
+        private readonly List<Worker> _wokersPool;
         private int _position = 0;
 
         public WorkersGenerator()
         {
-            WokersPool = new List<Worker>();
+            _wokersPool = new List<Worker>();
 
             AddWorkers(INITIAL_NUM_OF_WORKERS);
         }
@@ -21,16 +20,16 @@ namespace TaskSimulation.Workers
         {
             for (int i = 0; i < numOfWorkers; i++)
             {
-                WokersPool.Add(new Worker());
+                _wokersPool.Add(new Worker(++_workerID));
             }
         }
 
         public Worker GetNextWorker()
         {
-            if (_position >= WokersPool.Count)
+            if (_position >= _wokersPool.Count)
                 return null;
 
-            return WokersPool[_position++];
+            return _wokersPool[_position++];
         }
     }
 }

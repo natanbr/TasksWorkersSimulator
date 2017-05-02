@@ -9,21 +9,19 @@ namespace TaskSimulation
 {
     public class Worker
     {
-        public static int WORKER_ID = 0;
-
-        private int ID;
+        private long ID;
         private readonly List<Task> _queuedTasks;
         public bool WorkerStatus { get; private set; }
         public Grade Grade { get; set; }
         public WorkerUtilization Utilization;
         //public event Action<Worker> OnWorkerNotAvailable;
 
-        public Worker()
+        public Worker(long id)
         {
             Utilization = new WorkerUtilization();
             WorkerStatus = true;
             _queuedTasks = new List<Task>();
-            ID = WORKER_ID++;
+            ID = id;
 
             // The F,Q,R... will be used for next calc, Grade will be used as initial grade 
             Grade = new Grade()
@@ -69,7 +67,7 @@ namespace TaskSimulation
 
         public override string ToString()
         {
-            return $"Worker: {ID} ";
+            return $"Worker: {ID,-3:##} ";
         }
 
     }

@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TaskSimulation
+﻿namespace TaskSimulation
 {
     public class UnlimitedWorkersGenerator : IWorkersGenerator
     {
+        private long _id = 0;
         public Worker GetNextWorker()
         {
-            return new Worker();
+            _id++;
+            return new Worker(_id);
         }
     }
 }

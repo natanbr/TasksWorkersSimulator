@@ -68,7 +68,8 @@ namespace TaskSimulation.Simulator
 
         public void Update(WorkerArrivalEvent @event)
         {
-            var worker = @event.Worker;
+            var worker = _workersGenerator.GetNextWorker();
+            @event.Worker = worker;
 
             _activeWorkers.Add(worker);
 

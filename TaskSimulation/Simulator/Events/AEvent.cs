@@ -18,6 +18,11 @@ namespace TaskSimulation.Simulator
             return ArriveTime.CompareTo(other.ArriveTime);
         }
 
+        public override string ToString()
+        {
+            return $"{this.GetType().Name.SpaceCapitals()}";
+        }
+
         public abstract void Accept(ISimulatable visitor);
     }
 }

@@ -25,7 +25,6 @@ namespace TaskSimulation.Simulator
         public void Initialize(int initialNumOfWorkers)
         {
             Task.TASK_ID = 0;
-            Worker.WORKER_ID = 0;
 
             _simulationEvents.InitializeEvents(1, 1);
 
@@ -56,7 +55,7 @@ namespace TaskSimulation.Simulator
 
         public void PrintSimulationState()
         {
-            Log.I($"*** {SimulationClock,-5:##0.##}/{SimulatorMaxRunTime,-5:##0.##} ***");
+            Log.I($"* * * * * * * {SimulationClock:###0.##}/{SimulatorMaxRunTime:####0.##} * * * * * * *", ConsoleColor.Yellow);
 
             _workersJournal.ActiveWorkers.ForEach(w =>
             {

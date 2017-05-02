@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using TaskSimulation.Workers;
 
 namespace TaskSimulation.Simulator
 {
@@ -10,7 +12,6 @@ namespace TaskSimulation.Simulator
         public WorkerArrivalEvent(SimulationEventMan eventMan, double arriveAt) : base(arriveAt)
         {
             EventMan = eventMan;
-            Worker = new Worker();
         }
 
         public override void Accept(ISimulatable visitor)
@@ -20,7 +21,7 @@ namespace TaskSimulation.Simulator
 
         public override string ToString()
         {
-            return $"W> {Worker}";
+            return $"{this.GetType().Name.Split('.').Last().SpaceCapitals()}";
         }
     }
 }
