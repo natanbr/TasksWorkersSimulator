@@ -8,8 +8,8 @@ namespace TaskSimulation.ChooseAlgorithms
 
         int InitialGrade();
 
-        Grade TaskAdded(Grade grade);
-        Grade TaskRemoved(Grade grade, double responseTime);
+        Grade UpdateOnTaskAdd(Grade grade);
+        Grade UpdateOnTaskRemoved(Grade grade, double responseTime);
 
         Grade GenerateRandomGrade(Grade worker);
         int GetMaxNumberOfTasks();

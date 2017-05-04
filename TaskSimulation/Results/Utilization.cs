@@ -2,14 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using TaskSimulation.Simulator;
+using TaskSimulation.Simulator.Events;
 using Task = TaskSimulation.Simulator.Task;
 
 namespace TaskSimulation.Results
 {
     public class Utilization : ISimulatable
     {
-        public List<Task> _tasks;
-        public List<Worker> _workers;
+        private readonly List<Task> _tasks;
+        private readonly List<Worker> _workers;
+
+        public Utilization()
+        {
+            _tasks = new List<Task>();
+            _workers = new List<Worker>();
+        }
+
+        public void AddWorkers(List<Worker> workers)
+        {
+            _workers.AddRange(workers);
+        }
+
+        public void AddTasks(List<Task> tasks)
+        {
+            _tasks.AddRange(tasks);
+        }
 
         public void Update(TaskArrivalEvent @event)
         {
@@ -25,21 +42,6 @@ namespace TaskSimulation.Results
 
         public void Update(WorkerLeaveEvent @event) { }
 
-        public Utilization()
-        {
-            _tasks = new List<Task>();
-            _workers = new List<Worker>();
-        }
-
-        public void Visit(Task task)
-        {
-            _tasks.Add(task);
-        }
-
-        public void Visit(Worker worker)
-        {
-            _workers.Add(worker);
-        }
 
         public int GetNumberOfFinishedTasks()
         {
@@ -57,8 +59,8 @@ namespace TaskSimulation.Results
 
         public double GetTotalWorkersUtilization()
         {
-            var workersWorked = _workers.Sum(w => w.Utilization.BusyTime);
-            var workersTotalTime = _workers.Sum(w => w.Utilization.TotalTime);
+            var workersWorked = _workers.Sum(w => w.Statistics.BusyTime);
+            var workersTotalTime = _workers.Sum(w => w.Statistics.TotalTime);
             var workerUtilization = workersWorked / workersTotalTime;
             Log.I($"Workers utilization is {workersWorked}/{workersTotalTime} = {workerUtilization*100:N2}%");
             return workerUtilization;
@@ -71,13 +73,27 @@ namespace TaskSimulation.Results
         /// <returns></returns>
         public double GetSystemUtilization()
         {
-            var systemWorked = _workers.Sum(w => w.Utilization.BusyTime);
+            var systemWorked = _workers.Sum(w =>w.Statistics.BusyTime);
             var systemUtilization = (systemWorked /_workers.Count)/SimulateServer.SimulatorMaxRunTime;
             Log.I($"System utilization is: " +
                   $"({systemWorked}/{_workers.Count})/{SimulateServer.SimulatorMaxRunTime} = {systemUtilization * 100:N2}%");
             return systemUtilization;
         }
 
+        public double TaskWereInWaitList()
+        {
+            var totalWaitTime = _tasks.Sum(t =>
+            {
+                if (t.StartTime != -1)
+                    return t.StartTime - t.CreatedTime;
 
+                return SimulateServer.SimulationClock - t.CreatedTime;
+            });
+            var totalSystemTime = SimulateServer.SimulatorMaxRunTime * _tasks.Count;
+            var total = totalWaitTime / totalSystemTime;
+            Log.I($"Task were waiting: " +
+                  $"{totalWaitTime}/{totalSystemTime} = {total * 100:N2}%");
+            return total;
+        }
     }
 }

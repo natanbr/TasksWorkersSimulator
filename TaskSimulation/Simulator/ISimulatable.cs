@@ -1,4 +1,5 @@
 ﻿using TaskSimulation.Simulator;
+using TaskSimulation.Simulator.Events;
 
 namespace TaskSimulation
 {

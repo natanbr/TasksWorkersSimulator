@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TaskSimulation.ChooseAlgorithms;
 using TaskSimulation.Distribution;
+using TaskSimulation.Simulator.Events;
 using TaskSimulation.Workers;
 
 namespace TaskSimulation.Simulator
@@ -25,21 +26,18 @@ namespace TaskSimulation.Simulator
                 AddNewWorker();
         }
 
-        private Worker AddNewWorker()
+        private void AddNewWorker()
         {
             //var newWorker = new Worker();
             var newWorker = _workersGenerator.GetNextWorker();
             if (newWorker == null)
             {
                 Log.Err($"Error!! No more available workers!");
-                return null;
+                return;
             }
 
             _activeWorkers.Add(newWorker);
 
-            //Log.Event($"W> Adding new {newWorker}");
-
-            return newWorker;
         }
 
         public List<Worker> AssignTask(Task task)
@@ -70,19 +68,24 @@ namespace TaskSimulation.Simulator
         {
             var worker = _workersGenerator.GetNextWorker();
             @event.Worker = worker;
-
+            
             _activeWorkers.Add(worker);
 
             var simClock = SimulateServer.SimulationClock;
-            var finishIn = 5; // TODO
+            worker.Statistics.StartAt = simClock;
+
+            var finishIn = DistFactory.WorkerLeaveTime.Sample();
             @event.EventMan.AddEvent(new WorkerLeaveEvent(worker, simClock + finishIn));
         }
 
         public void Update(WorkerLeaveEvent @event)
         {
             // TODO for each worker task in the list reassign them
+            var worker = @event.Worker;
 
-            _activeWorkers.Remove(@event.Worker);
+            worker.Statistics.EndAt = SimulateServer.SimulationClock;
+
+            _activeWorkers.Remove(worker);
         }
 
         public void Update(TaskArrivalEvent @event)

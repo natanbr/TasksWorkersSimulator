@@ -15,6 +15,7 @@ namespace TaskSimulation.Results
         public double TotalSystemUtilization;
         public int FinishedTasksForSingleExecution;
         public int TotalTasksForSingleExecution;
+        public double TotalTasksWait;
 
         public override string ToString()
         {
@@ -23,6 +24,7 @@ namespace TaskSimulation.Results
                 .AppendLine("--------Execution-------")
                 .AppendLine($"Workers Utilization:              {TotalWorkersUtilization*100:N2}%")
                 .AppendLine($"System Utilization:               {TotalSystemUtilization*100:N2}%")
+                .AppendLine($"Tasks Wait:                       {TotalTasksWait * 100:N2}%")
                 .AppendLine($"Finished Tasks:                   {FinishedTasksForSingleExecution}")
                 .AppendLine($"Total tasks:                      {TotalTasksForSingleExecution}")
                 .AppendLine("");

@@ -1,6 +1,7 @@
 ﻿using System;
 using TaskSimulation.Distribution;
 using TaskSimulation.Results;
+using TaskSimulation.Simulator.Events;
 
 namespace TaskSimulation.Simulator
 {
@@ -12,7 +13,7 @@ namespace TaskSimulation.Simulator
 
         private int _eventCode;
 
-        public double CreatedTime { get; private set; }
+        public double CreatedTime { get; set; }
         public double StartTime { get; private set; }
 
         public double EndTime { get; private set; }
@@ -23,11 +24,10 @@ namespace TaskSimulation.Simulator
         {
             EndTime = NOT_STARTED;
             StartTime = NOT_STARTED;
-            CreatedTime = SimulateServer.SimulationClock;
             _eventCode = TASK_ID++;
         }
 
-        public void Assign(Worker worker)
+        public void AssignedBy(Worker worker)
         {
             StartTime = SimulateServer.SimulationClock;
 

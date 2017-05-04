@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TaskSimulation.Simulator
+﻿namespace TaskSimulation.Simulator.Events
 {
     public class TaskArrivalEvent : AEvent
     {
@@ -16,6 +14,11 @@ namespace TaskSimulation.Simulator
         public override void Accept(ISimulatable visitor)
         {
             visitor.Update(this);
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + $" {Task}";
         }
     }
 }

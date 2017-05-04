@@ -1,5 +1,6 @@
 ﻿using System;
 using TaskSimulation.Results;
+using TaskSimulation.Simulator.Events;
 
 namespace TaskSimulation.Simulator
 {
@@ -24,12 +25,17 @@ namespace TaskSimulation.Simulator
 
         public void Initialize(int initialNumOfWorkers)
         {
+            Log.D("* * * * * * * Init * * * * * * *");
             Task.TASK_ID = 0;
 
             _simulationEvents.InitializeEvents(1, 1);
 
             _tasksJournal = new TasksJournal();
+
             _workersJournal = new WorkersJournal(initialNumOfWorkers);
+            Utilization.AddWorkers(_workersJournal.ActiveWorkers);
+
+            Log.D("* * * * * * * Init * * * * * * *");
         }
 
         public void Start()
@@ -47,9 +53,9 @@ namespace TaskSimulation.Simulator
                 nextEvent.Accept(_workersJournal);
                 nextEvent.Accept(Utilization);
 
-                nextEvent = _simulationEvents.GetNextEvent();
-
                 PrintSimulationState();
+
+                nextEvent = _simulationEvents.GetNextEvent();
             }
         }
 
