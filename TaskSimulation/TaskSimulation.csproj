@@ -37,8 +37,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MathNet.Numerics, Version=3.18.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MathNet.Numerics.3.18.0\lib\net40\MathNet.Numerics.dll</HintPath>
+    <Reference Include="MathNet.Numerics, Version=3.19.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathNet.Numerics.3.19.0\lib\net40\MathNet.Numerics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -62,7 +62,7 @@
     <Compile Include="PriorityQueues.cs" />
     <Compile Include="Results\ExecutionSummary.cs" />
     <Compile Include="Results\IStatisticCollectorVisitor.cs" />
-    <Compile Include="Results\WorkerUtilization.cs" />
+    <Compile Include="Results\WorkerStatistics.cs" />
     <Compile Include="Simulator\Events\AEvent.cs" />
     <Compile Include="Simulator\Events\WorkerLeaveEvent.cs" />
     <Compile Include="Simulator\Events\WorkerArrivalEvent.cs" />
@@ -74,7 +74,6 @@
     <Compile Include="Simulator\Task.cs" />
     <Compile Include="Simulator\TasksJournal.cs" />
     <Compile Include="Simulator\ISimulatable.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Simulator\SimulateServer.cs" />
     <Compile Include="Results\Utilization.cs" />

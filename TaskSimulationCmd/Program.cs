@@ -36,16 +36,16 @@ namespace TaskSimulationCmd
         static readonly ExecutionSummary[] _summaries = new ExecutionSummary[NUM_OF_EXECUTIONS];
 
         const int INITIAL_NUM_OF_WORKERS = 10;
-        const double MAX_SIMULATION_TIME    = 1;
+        const double MAX_SIMULATION_TIME    = 10;
 
         static void Main(string[] args)
         {
-            DistFactory.TaskArrivalTime   = new ContinuousUniform(1, 3);
-            DistFactory.WorkerArrivalTime = new ContinuousUniform(5, 10);
+            DistFactory.TaskArrivalTime   = new ContinuousUniform(1, 1);
+            DistFactory.WorkerArrivalTime = new ContinuousUniform(100, 100);
 
             DistFactory.FeedbackDistribution = new ContinuousUniform(1, 10);
             DistFactory.QualityGrade =         new ContinuousUniform(1, 10);
-            DistFactory.ResponseTime =         new ContinuousUniform(2, 10);
+            DistFactory.ResponseTime =         new ContinuousUniform(2, 2);
 
             DistFactory.GradeSystem = new OriginalGradeCalc();
 
@@ -77,7 +77,8 @@ namespace TaskSimulationCmd
                 TotalWorkersUtilization         = simulator.Utilization.GetTotalWorkersUtilization(),
                 TotalSystemUtilization          = simulator.Utilization.GetSystemUtilization(),
                 FinishedTasksForSingleExecution = simulator.Utilization.GetNumberOfFinishedTasks(),
-                TotalTasksForSingleExecution    = simulator.Utilization.GetNumberOfTotalTasks()
+                TotalTasksForSingleExecution    = simulator.Utilization.GetNumberOfTotalTasks(),
+                TotalTasksWait                  = simulator.Utilization.TaskWereInWaitList()
             };
 
             return executionStatistics;

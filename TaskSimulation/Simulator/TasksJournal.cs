@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TaskSimulation.Distribution;
+using TaskSimulation.Simulator.Events;
 
 namespace TaskSimulation.Simulator
 {
@@ -16,6 +17,9 @@ namespace TaskSimulation.Simulator
         public void Update(TaskArrivalEvent @event)
         {
             var task = @event.Task;
+
+            task.CreatedTime = SimulateServer.SimulationClock;
+
             _unassignedTasks.Add(task);
 
             task.OnTaskAssigned += _ =>

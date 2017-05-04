@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using TaskSimulation.Workers;
-
-namespace TaskSimulation.Simulator
+﻿namespace TaskSimulation.Simulator.Events
 {
     public class WorkerArrivalEvent : AEvent
     {
@@ -19,9 +15,9 @@ namespace TaskSimulation.Simulator
             visitor.Update(this);
         }
 
-        public override string ToString()
+        /*public override string ToString()
         {
             return $"{this.GetType().Name.Split('.').Last().SpaceCapitals()}";
-        }
+        }*/
     }
 }

@@ -11,6 +11,7 @@ namespace TaskSimulation.Distribution
 
         public static IContinuousDistribution TaskArrivalTime { get; set; }
         public static IContinuousDistribution WorkerArrivalTime { get; set; }
+        public static IContinuousDistribution WorkerLeaveTime { get; set; }
 
         public static IContinuousDistribution FeedbackDistribution { get; set; }
         public static IContinuousDistribution QualityGrade { get; set; }

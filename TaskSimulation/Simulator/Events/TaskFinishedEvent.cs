@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TaskSimulation.Simulator
+﻿namespace TaskSimulation.Simulator.Events
 {
     public class TaskFinishedEvent : AEvent
     {

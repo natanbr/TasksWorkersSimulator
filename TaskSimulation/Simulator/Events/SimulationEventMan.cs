@@ -1,12 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaskSimulation.Distribution;
-using MathNet.Numerics.Distributions;
+﻿using TaskSimulation.Distribution;
 
-namespace TaskSimulation.Simulator
+namespace TaskSimulation.Simulator.Events
 {
     public class SimulationEventMan
     {
@@ -28,12 +22,13 @@ namespace TaskSimulation.Simulator
                 AddEvent(new TaskArrivalEvent(this, 0));
 
             for (var w = 0; w < workers; w++)
-                AddEvent(new WorkerArrivalEvent(this, 1.1));
+                AddEvent(new WorkerArrivalEvent(this, 0));
         }
 
         public void AddEvent(AEvent newEvent)
         {
-            Log.D($"Adding {newEvent} at time: {newEvent.ArriveTime,-7:##0.###}");
+            var msg = $"Adding {newEvent} at time: {newEvent.ArriveTime,-7:##0.###}";
+            Log.D(msg);
             _events.Enqueue(newEvent);
         }
 
@@ -41,18 +36,16 @@ namespace TaskSimulation.Simulator
         {
             if (_events.Count() <= 0) return null;
 
-            var nextEvent =  _events.Dequeue();
+            var deqEvent =  _events.Dequeue();
 
-            var time = SimulateServer.SimulationClock;
+            if (deqEvent is TaskArrivalEvent)
+                AddEvent(new TaskArrivalEvent(this, deqEvent.ArriveTime + DistFactory.TaskArrivalTime.Sample()));
 
-            if (nextEvent is TaskArrivalEvent)
-                AddEvent(new TaskArrivalEvent(this, time + DistFactory.TaskArrivalTime.Sample()));
-
-            if (nextEvent is WorkerArrivalEvent)
-                AddEvent(new WorkerArrivalEvent(this, time + DistFactory.WorkerArrivalTime.Sample()));
+            if (deqEvent is WorkerArrivalEvent)
+                AddEvent(new WorkerArrivalEvent(this, deqEvent.ArriveTime + DistFactory.WorkerArrivalTime.Sample()));
 
 
-            return nextEvent;
+            return deqEvent;
         }
     }
 }

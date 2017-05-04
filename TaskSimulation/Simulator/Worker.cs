@@ -13,12 +13,12 @@ namespace TaskSimulation
         private readonly List<Task> _queuedTasks;
         public bool WorkerStatus { get; private set; }
         public Grade Grade { get; set; }
-        public WorkerUtilization Utilization;
+        public WorkerStatistics Statistics;
         //public event Action<Worker> OnWorkerNotAvailable;
 
         public Worker(long id)
         {
-            Utilization = new WorkerUtilization();
+            Statistics = new WorkerStatistics();
             WorkerStatus = true;
             _queuedTasks = new List<Task>();
             ID = id;
@@ -44,7 +44,7 @@ namespace TaskSimulation
         {
             // Add the task
             _queuedTasks.Add(task);
-            task.Assign(this);
+
             Grade = DistFactory.GradeSystem.TaskAdded(Grade);
         }
 
@@ -53,21 +53,15 @@ namespace TaskSimulation
             Log.Event($"{this} finished {task}, duration: {task.EndTime - task.StartTime}");
             _queuedTasks.Remove(task);
 
+            Statistics.BusyTime += task.EndTime - task.StartTime;
+
             Grade = DistFactory.GradeSystem.TaskRemoved(Grade, task.EndTime - task.StartTime);
             Grade = DistFactory.GradeSystem.GenerateRandomGrade(Grade);
         }
 
-        // TODO move out from here
-        private void UpdateStatistics()
-        {
-            if (_queuedTasks.Count == 0)
-                Utilization.FreeTime++;
-            else Utilization.BusyTime++;
-        }
-
         public override string ToString()
         {
-            return $"Worker: {ID,-3:##} ";
+            return $"Worker: {ID,-3:##}";
         }
 
     }
