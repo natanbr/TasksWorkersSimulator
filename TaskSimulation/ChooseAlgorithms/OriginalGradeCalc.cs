@@ -21,7 +21,7 @@ namespace TaskSimulation.ChooseAlgorithms
             return totalGrade;
         }
 
-        public Grade TaskAdded(Grade grade)
+        public Grade UpdateOnTaskAdd(Grade grade)
         {
             grade.NumberOfTasksGrade--;
             grade.TotalGrade = GetFinalGrade(grade);
@@ -29,7 +29,7 @@ namespace TaskSimulation.ChooseAlgorithms
             return grade;
         }
 
-        public Grade TaskRemoved(Grade grade, double responseTime)
+        public Grade UpdateOnTaskRemoved(Grade grade, double responseTime)
         {
             grade.NumberOfTasksGrade++;
             grade.ResponseGrade = (int)((_runningAvrg) * (RESPONCE_TIME - responseTime) + (1 - _runningAvrg) * grade.ResponseGrade);

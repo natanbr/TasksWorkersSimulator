@@ -27,7 +27,7 @@ namespace TaskSimulation.Simulator
             _eventCode = TASK_ID++;
         }
 
-        public void Assign(Worker worker)
+        public void AssignedBy(Worker worker)
         {
             StartTime = SimulateServer.SimulationClock;
 

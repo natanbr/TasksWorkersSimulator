@@ -14,6 +14,7 @@ namespace TaskSimulation
         public bool WorkerStatus { get; private set; }
         public Grade Grade { get; set; }
         public WorkerStatistics Statistics;
+        private bool _working = false;
         //public event Action<Worker> OnWorkerNotAvailable;
 
         public Worker(long id)
@@ -37,31 +38,40 @@ namespace TaskSimulation
 
         public void Assign(Task task)
         {
-            AddTask(task);
-        }
-
-        private void AddTask(Task task)
-        {
             // Add the task
             _queuedTasks.Add(task);
 
-            Grade = DistFactory.GradeSystem.TaskAdded(Grade);
+            Grade = DistFactory.GradeSystem.UpdateOnTaskAdd(Grade);
+
+            TryDoWork();
         }
+
 
         public void RemoveTask(Task task)
         {
             Log.Event($"{this} finished {task}, duration: {task.EndTime - task.StartTime}");
             _queuedTasks.Remove(task);
-
+            _working = false;
             Statistics.BusyTime += task.EndTime - task.StartTime;
 
-            Grade = DistFactory.GradeSystem.TaskRemoved(Grade, task.EndTime - task.StartTime);
+            Grade = DistFactory.GradeSystem.UpdateOnTaskRemoved(Grade, task.EndTime - task.StartTime);
             Grade = DistFactory.GradeSystem.GenerateRandomGrade(Grade);
+
+            // Start work on the next task
+            TryDoWork();
         }
 
         public override string ToString()
         {
             return $"Worker: {ID,-3:##}";
+        }
+
+        private void TryDoWork()
+        {
+            if (_working || _queuedTasks.Count == 0) return;
+
+            _queuedTasks[0].AssignedBy(this);
+            _working = true;
         }
 
     }

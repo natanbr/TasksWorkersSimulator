@@ -57,11 +57,6 @@ namespace TaskSimulation.Results
             return totalTasks;
         }
 
-        public void FinalizeUtilization()
-        {
-            
-        }
-
         public double GetTotalWorkersUtilization()
         {
             var workersWorked = _workers.Sum(w => w.Statistics.BusyTime);
@@ -87,7 +82,13 @@ namespace TaskSimulation.Results
 
         public double TaskWereInWaitList()
         {
-            var totalWaitTime = _tasks.Sum(t => t.StartTime - t.CreatedTime);
+            var totalWaitTime = _tasks.Sum(t =>
+            {
+                if (t.StartTime != -1)
+                    return t.StartTime - t.CreatedTime;
+
+                return SimulateServer.SimulationClock - t.CreatedTime;
+            });
             var totalSystemTime = SimulateServer.SimulatorMaxRunTime * _tasks.Count;
             var total = totalWaitTime / totalSystemTime;
             Log.I($"Task were waiting: " +
