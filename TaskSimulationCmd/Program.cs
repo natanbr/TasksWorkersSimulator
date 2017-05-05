@@ -14,8 +14,7 @@ namespace TaskSimulationCmd
     class Program
     {
         // Assumptions: 
-        // - Only one task\ worker can arrive at time x, (Arrival rate works on jurnal, finish rate on each worker\task)
-        // - task is assigned only to one worker
+        // - Task is assigned only to one worker
         // - Each worker has only one active task, may have more then one in the queue
         // - number of workers at begining is x, number of task is 0
         // - Grade is now continuous distribution (not between 0 - 10)
@@ -26,11 +25,7 @@ namespace TaskSimulationCmd
         // - Go over all the distributions
         // - Worker didn't compleate the task and left - what happens? End time = worker left?
         // TODOs
-        // V Task can't be finished at same time it was added
-        // - Response time grade need to be connected to actual response time in the simulation
-        // V if there is same grade but one worker has task and other don't, give the task to the worker without the task
-        // - Add to score function the avrg length of queue, (sum of queue length for each x in time / time now) -> from 1 to 3 it had 2 tasks -> 2 * 2 (sum of area)
-
+        // - Add General seed and seed per worker
 
         const int NUM_OF_EXECUTIONS = 1;
         static readonly ExecutionSummary[] _summaries = new ExecutionSummary[NUM_OF_EXECUTIONS];

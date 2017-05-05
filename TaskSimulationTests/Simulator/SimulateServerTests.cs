@@ -32,8 +32,10 @@ namespace TaskSimulationTests.Simulator
 
             var executionSummary = SingleExecution();
 
-
-
+            Assert.AreEqual((double)6/8, executionSummary.TotalWorkersUtilization);
+            Assert.AreEqual((double)2/25, executionSummary.TotalTasksWait);
+            Assert.AreEqual(2, executionSummary.FinishedTasksForSingleExecution);
+            Assert.AreEqual(5, executionSummary.TotalTasksForSingleExecution);
         }
 
         public ExecutionSummary SingleExecution()
