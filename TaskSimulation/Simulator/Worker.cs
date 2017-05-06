@@ -27,13 +27,13 @@ namespace TaskSimulation
             // The F,Q,R... will be used for next calc, Grade will be used as initial grade 
             Grade = new Grade()
             {
-                FeedbackGrade = DistFactory.GradeSystem.InitialGrade(),
-                QualityGrade = DistFactory.GradeSystem.InitialGrade(),
-                ResponseGrade = DistFactory.GradeSystem.InitialGrade(),
-                NumberOfTasksGrade = DistFactory.GradeSystem.GetMaxNumberOfTasks(),
+                FeedbackGrade = SimDistribution.I.GradeSystem.InitialGrade(),
+                QualityGrade = SimDistribution.I.GradeSystem.InitialGrade(),
+                ResponseGrade = SimDistribution.I.GradeSystem.InitialGrade(),
+                NumberOfTasksGrade = SimDistribution.I.GradeSystem.GetMaxNumberOfTasks(),
             };
 
-            Grade.TotalGrade = DistFactory.GradeSystem.GetFinalGrade(Grade);
+            Grade.TotalGrade = SimDistribution.I.GradeSystem.GetFinalGrade(Grade);
         }
 
         public void Assign(Task task)
@@ -41,7 +41,7 @@ namespace TaskSimulation
             // Add the task
             _queuedTasks.Add(task);
 
-            Grade = DistFactory.GradeSystem.UpdateOnTaskAdd(Grade);
+            Grade = SimDistribution.I.GradeSystem.UpdateOnTaskAdd(Grade);
 
             TryDoWork();
         }
@@ -54,8 +54,8 @@ namespace TaskSimulation
             _working = false;
             Statistics.BusyTime += task.EndTime - task.StartTime;
 
-            Grade = DistFactory.GradeSystem.UpdateOnTaskRemoved(Grade, task.EndTime - task.StartTime);
-            Grade = DistFactory.GradeSystem.GenerateRandomGrade(Grade);
+            Grade = SimDistribution.I.GradeSystem.UpdateOnTaskRemoved(Grade, task.EndTime - task.StartTime);
+            Grade = SimDistribution.I.GradeSystem.GenerateRandomGrade(Grade);
 
             // Start work on the next task
             TryDoWork();

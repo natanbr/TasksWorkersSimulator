@@ -48,12 +48,12 @@ namespace GraphicalResults
         public void MainExec()
         {
 
-            DistFactory.FeedbackDistribution = new Normal(10, 10);
-            DistFactory.QualityGrade = new Normal(10, 10);
+            SimDistribution.I.FeedbackDistribution = new Normal(10, 10);
+            SimDistribution.I.QualityGrade = new Normal(10, 10);
 
-            DistFactory.TaskArrivalTime = new Exponential(20);
+            SimDistribution.I.TaskArrivalTime = new Exponential(20);
 
-            DistFactory.GradeSystem = new OriginalGradeCalc();
+            SimDistribution.I.GradeSystem = new OriginalGradeCalc();
                         
             for (var i = 0; i < _numOfExecutions; i++)
             {

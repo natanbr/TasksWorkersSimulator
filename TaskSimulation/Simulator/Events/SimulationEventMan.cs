@@ -39,10 +39,10 @@ namespace TaskSimulation.Simulator.Events
             var deqEvent =  _events.Dequeue();
 
             if (deqEvent is TaskArrivalEvent)
-                AddEvent(new TaskArrivalEvent(this, deqEvent.ArriveTime + DistFactory.TaskArrivalTime.Sample()));
+                AddEvent(new TaskArrivalEvent(this, deqEvent.ArriveTime + SimDistribution.I.TaskArrivalTime.Sample()));
 
             if (deqEvent is WorkerArrivalEvent)
-                AddEvent(new WorkerArrivalEvent(this, deqEvent.ArriveTime + DistFactory.WorkerArrivalTime.Sample()));
+                AddEvent(new WorkerArrivalEvent(this, deqEvent.ArriveTime + SimDistribution.I.WorkerArrivalTime.Sample()));
 
 
             return deqEvent;

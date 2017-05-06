@@ -31,27 +31,45 @@ namespace TaskSimulationCmd
         static readonly ExecutionSummary[] _summaries = new ExecutionSummary[NUM_OF_EXECUTIONS];
 
         const int INITIAL_NUM_OF_WORKERS = 10;
-        const double MAX_SIMULATION_TIME    = 10;
+        const double MAX_SIMULATION_TIME    = 100;
+
+        public T Create<T>() where T : class, new()
+        {
+            return new T();
+        }
 
         static void Main(string[] args)
         {
-            DistFactory.TaskArrivalTime   = new ContinuousUniform(1, 1);
-            DistFactory.WorkerArrivalTime = new ContinuousUniform(100, 100);
+            /*var a = typeof (ContinuousUniform);
+            */
+            SimDistribution.I.Initialize(Guid.NewGuid().GetHashCode());
 
-            DistFactory.FeedbackDistribution = new ContinuousUniform(1, 10);
-            DistFactory.QualityGrade =         new ContinuousUniform(1, 10);
-            DistFactory.ResponseTime =         new ContinuousUniform(2, 2);
+            Log.I($"Global seed is {SimDistribution.I.GlobalSeed}");
+            Log.I($"Global Random is {SimDistribution.I.GlobalRandom}");
 
-            DistFactory.GradeSystem = new OriginalGradeCalc();
+            SimDistribution.I.TaskArrivalTime      = new ContinuousUniform(1, 10, SimDistribution.I.GlobalRandom);
+            SimDistribution.I.WorkerArrivalTime    = new ContinuousUniform(100, 100, SimDistribution.I.GlobalRandom);
+            SimDistribution.I.WorkerLeaveTime      = new ContinuousUniform(100, 100, SimDistribution.I.GlobalRandom); // never
+            SimDistribution.I.FeedbackDistribution = new ContinuousUniform(1, 10, SimDistribution.I.GlobalRandom);
+            SimDistribution.I.QualityGrade         = new ContinuousUniform(2, 10, SimDistribution.I.GlobalRandom);
+            SimDistribution.I.ResponseTime         = new ContinuousUniform(7, 20, SimDistribution.I.GlobalRandom);
+
+            SimDistribution.I.GradeSystem          = new OriginalGradeCalc();
+
+
+            //var randomGenerator = new Random(globalSeed);
+
 
             for (int i = 0; i < NUM_OF_EXECUTIONS; i++)
             {
+
+
                 Log.I($"---------------------------- Simulation Execution {i} ----------------------------", ConsoleColor.DarkCyan);
                 _summaries[i] = SingleExecution();
             }
 
             Log.I();
-            Log.I("----------- Print Results ----------- ", ConsoleColor.Blue);
+            Log.I("----------- Print Results ----------- ", ConsoleColor.Blue); 
             _summaries.ToList().ForEach(v => Log.I(v.ToString()));
         }
 
@@ -64,7 +82,9 @@ namespace TaskSimulationCmd
             simulator.Start();
 
             Log.I();
+            Log.I();
             Log.I("----------- Post execution calculations ----------- ", ConsoleColor.Blue);
+
             var executionStatistics = new ExecutionSummary()
             {
                 ExecutionTime = MAX_SIMULATION_TIME,

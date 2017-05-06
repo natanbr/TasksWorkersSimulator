@@ -6,9 +6,7 @@ namespace TaskSimulation.Results
     {
         public double StartAt { get; set; }
         public double EndAt { get; set; }
-
         public double BusyTime { get; set; }
-
         public double FreeTime => TotalTime - BusyTime;
 
         public double TotalTime

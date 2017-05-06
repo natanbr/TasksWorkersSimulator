@@ -32,7 +32,7 @@ namespace TaskSimulation.ChooseAlgorithms
         public Grade UpdateOnTaskRemoved(Grade grade, double responseTime)
         {
             grade.NumberOfTasksGrade++;
-            grade.ResponseGrade = (int)((_runningAvrg) * (RESPONCE_TIME - responseTime) + (1 - _runningAvrg) * grade.ResponseGrade);
+            grade.ResponseGrade = (int)((_runningAvrg) * (responseTime) + (1 - _runningAvrg) * grade.ResponseGrade);
             grade.TotalGrade = GetFinalGrade(grade);
 
             Log.D($"Grade Update: TaskRemoved: (N:{grade.NumberOfTasksGrade}, R:[t={responseTime}]->{grade.ResponseGrade})");
@@ -47,8 +47,8 @@ namespace TaskSimulation.ChooseAlgorithms
             //var prevResponseGrade = grade.ResponseGrade;
             var prevTotal = grade.ResponseGrade;
 
-            var newFeedbackGrade = DistFactory.FeedbackDistribution.Sample();
-            var newQualityGrade =  DistFactory.QualityGrade.Sample();
+            var newFeedbackGrade = SimDistribution.I.FeedbackDistribution.Sample();
+            var newQualityGrade =  SimDistribution.I.QualityGrade.Sample();
             //var newResponseGrade = DistFactory.ResponseGrade.Sample();
 
             grade.FeedbackGrade = (int)((_runningAvrg) * newFeedbackGrade + (1 - _runningAvrg) * prevFeedbackGrade);

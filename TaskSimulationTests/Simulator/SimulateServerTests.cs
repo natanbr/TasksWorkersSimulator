@@ -22,13 +22,13 @@ namespace TaskSimulationTests.Simulator
             _initialNumOfWorkers = 1;
             _maxSimulationTime = 5;
 
-            DistFactory.TaskArrivalTime = new ContinuousUniform(1, 1);
-            DistFactory.WorkerArrivalTime = new ContinuousUniform(100, 100); // never
-            DistFactory.WorkerLeaveTime = new ContinuousUniform(100, 100); // never
-            DistFactory.FeedbackDistribution = new ContinuousUniform(7, 7);
-            DistFactory.QualityGrade = new ContinuousUniform(7, 7);
-            DistFactory.ResponseTime = new ContinuousUniform(3, 3);
-            DistFactory.GradeSystem = new OriginalGradeCalc();
+            SimDistribution.I.TaskArrivalTime = new ContinuousUniform(1, 1);
+            SimDistribution.I.WorkerArrivalTime = new ContinuousUniform(100, 100); // never
+            SimDistribution.I.WorkerLeaveTime = new ContinuousUniform(100, 100); // never
+            SimDistribution.I.FeedbackDistribution = new ContinuousUniform(7, 7);
+            SimDistribution.I.QualityGrade = new ContinuousUniform(7, 7);
+            SimDistribution.I.ResponseTime = new ContinuousUniform(3, 3);
+            SimDistribution.I.GradeSystem = new OriginalGradeCalc();
 
             var executionSummary = SingleExecution();
 
@@ -36,6 +36,44 @@ namespace TaskSimulationTests.Simulator
             Assert.AreEqual((double)2/25, executionSummary.TotalTasksWait);
             Assert.AreEqual(2, executionSummary.FinishedTasksForSingleExecution);
             Assert.AreEqual(5, executionSummary.TotalTasksForSingleExecution);
+        }
+
+        [TestMethod()]
+        public void SeedTest()
+        {
+            var randomGen = new Random(5);
+            var distWithSeed = new ContinuousUniform(1, 10000, randomGen);
+            Assert.AreEqual(3384, (int)distWithSeed.Sample());
+            Assert.AreEqual(2844, (int)distWithSeed.Sample());
+            Assert.AreEqual(2630, (int)distWithSeed.Sample());
+        }
+
+        [TestMethod()]
+        public void DistTest()
+        {
+            SimDistribution.I.Initialize(Guid.NewGuid().GetHashCode());
+            SimDistribution.I.TaskArrivalTime = new ContinuousUniform(1, 5, SimDistribution.I.GlobalRandom);
+
+            var r1 = SimDistribution.I.GlobalRandom.Next();
+            var s1 = SimDistribution.I.TaskArrivalTime.Sample();
+            var s2 = SimDistribution.I.TaskArrivalTime.Sample();
+            var s3 = SimDistribution.I.TaskArrivalTime.Sample();
+            var s4 = SimDistribution.I.TaskArrivalTime.Sample();
+
+
+            SimDistribution.I.Initialize(Guid.NewGuid().GetHashCode());
+            SimDistribution.I.TaskArrivalTime = new ContinuousUniform(1, 5, SimDistribution.I.GlobalRandom);
+
+            var r2 = SimDistribution.I.GlobalRandom.Next();
+            var s5 = SimDistribution.I.TaskArrivalTime.Sample();
+            var s6 = SimDistribution.I.TaskArrivalTime.Sample();
+            var s7 = SimDistribution.I.TaskArrivalTime.Sample();
+            var s8 = SimDistribution.I.TaskArrivalTime.Sample();
+
+            Assert.AreNotEqual(r1, r2);
+            Assert.AreNotEqual(s1 + s2 + s3 + s4, s5 + s6 + s7 + s8);
+
+
         }
 
         public ExecutionSummary SingleExecution()

@@ -74,7 +74,7 @@ namespace TaskSimulation.Simulator
             var simClock = SimulateServer.SimulationClock;
             worker.Statistics.StartAt = simClock;
 
-            var finishIn = DistFactory.WorkerLeaveTime.Sample();
+            var finishIn = SimDistribution.I.WorkerLeaveTime.Sample();
             @event.EventMan.AddEvent(new WorkerLeaveEvent(worker, simClock + finishIn));
         }
 
@@ -100,7 +100,7 @@ namespace TaskSimulation.Simulator
                 var simClock = SimulateServer.SimulationClock;
 
                 // TODO calc using worker's data
-                var finishIn = DistFactory.ResponseTime.Sample();
+                var finishIn = SimDistribution.I.ResponseTime.Sample();
                 @event.EventMan.AddEvent(new TaskFinishedEvent(task, worker, simClock + finishIn));
             });
         }

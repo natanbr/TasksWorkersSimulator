@@ -54,7 +54,7 @@
     <Compile Include="ChooseAlgorithms\ChooseHighestGrade.cs" />
     <Compile Include="ChooseAlgorithms\IGradeCalcAlgo.cs" />
     <Compile Include="ChooseAlgorithms\OriginalGradeCalc.cs" />
-    <Compile Include="Distribution\DistFactory.cs" />
+    <Compile Include="Distribution\SimDistribution.cs" />
     <Compile Include="Distribution\ExtensionMethods.cs" />
     <Compile Include="ChooseAlgorithms\IChooseWorkerAlgo.cs" />
     <Compile Include="ExtensionMethods.cs" />
