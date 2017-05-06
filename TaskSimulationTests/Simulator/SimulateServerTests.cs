@@ -37,6 +37,28 @@ namespace TaskSimulationTests.Simulator
             Assert.AreEqual(2, executionSummary.FinishedTasksForSingleExecution);
             Assert.AreEqual(5, executionSummary.TotalTasksForSingleExecution);
         }
+        [TestMethod()]
+        public void SimulateServerTest2()
+        {
+            _initialNumOfWorkers = 1;
+            _maxSimulationTime = 100; // Mast me much larger then the initial pool size (10)
+            SimDistribution.I.Initialize(1);
+
+            SimDistribution.I.TaskArrivalTime = new ContinuousUniform(1, 1, SimDistribution.I.GlobalRandom);
+            SimDistribution.I.WorkerArrivalTime = new ContinuousUniform(1, 1, SimDistribution.I.GlobalRandom); 
+            SimDistribution.I.WorkerLeaveTime = new ContinuousUniform(1, 2, SimDistribution.I.GlobalRandom); 
+            SimDistribution.I.FeedbackDistribution = new ContinuousUniform(7, 7, SimDistribution.I.GlobalRandom);
+            SimDistribution.I.QualityGrade = new ContinuousUniform(7, 7, SimDistribution.I.GlobalRandom);
+            SimDistribution.I.ResponseTime = new ContinuousUniform(3, 3, SimDistribution.I.GlobalRandom);
+            SimDistribution.I.GradeSystem = new OriginalGradeCalc();
+
+            var executionSummary = SingleExecution();
+
+            Assert.AreEqual(118, (int)(executionSummary.TotalWorkersUtilization * 100));
+            Assert.AreEqual(97, executionSummary.FinishedTasksForSingleExecution);
+            Assert.AreEqual(100, executionSummary.TotalTasksForSingleExecution);
+        }
+
 
         [TestMethod()]
         public void SeedTest()
@@ -60,7 +82,6 @@ namespace TaskSimulationTests.Simulator
             var s3 = SimDistribution.I.TaskArrivalTime.Sample();
             var s4 = SimDistribution.I.TaskArrivalTime.Sample();
 
-
             SimDistribution.I.Initialize(Guid.NewGuid().GetHashCode());
             SimDistribution.I.TaskArrivalTime = new ContinuousUniform(1, 5, SimDistribution.I.GlobalRandom);
 
@@ -72,8 +93,6 @@ namespace TaskSimulationTests.Simulator
 
             Assert.AreNotEqual(r1, r2);
             Assert.AreNotEqual(s1 + s2 + s3 + s4, s5 + s6 + s7 + s8);
-
-
         }
 
         public ExecutionSummary SingleExecution()

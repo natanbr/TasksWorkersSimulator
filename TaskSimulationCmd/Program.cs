@@ -8,6 +8,7 @@ using TaskSimulation.ChooseAlgorithms;
 using TaskSimulation.Distribution;
 using TaskSimulation.Results;
 using TaskSimulation.Simulator;
+using TaskSimulation.Workers;
 
 namespace TaskSimulationCmd
 {
@@ -16,16 +17,16 @@ namespace TaskSimulationCmd
         // Assumptions: 
         // - Task is assigned only to one worker
         // - Each worker has only one active task, may have more then one in the queue
-        // - number of workers at begining is x, number of task is 0
-        // - Grade is now continuous distribution (not between 0 - 10)
+        // - Always adding 1 worker event and 1 task event at time 0
         // - When worker leave, the task is NOT reassigned
         // Questions:
-        // - What to show in the graphs
+        // - What to show in the graphs?
         // - What is the implementation of the Grade calculation?
-        // - Go over all the distributions
-        // - Worker didn't compleate the task and left - what happens? End time = worker left?
+        // - What are the parameters for the Distributions?
         // TODOs
-        // - Add General seed and seed per worker
+        // - SimulateServerTest2 returns unrealistic results
+        // - Add Personal seed and params for workers grade
+        // - When Worker didn't complete the task and left -> End time = worker left
 
         const int NUM_OF_EXECUTIONS = 1;
         static readonly ExecutionSummary[] _summaries = new ExecutionSummary[NUM_OF_EXECUTIONS];
@@ -33,37 +34,24 @@ namespace TaskSimulationCmd
         const int INITIAL_NUM_OF_WORKERS = 10;
         const double MAX_SIMULATION_TIME    = 100;
 
-        public T Create<T>() where T : class, new()
+        static void Main()
         {
-            return new T();
-        }
-
-        static void Main(string[] args)
-        {
-            /*var a = typeof (ContinuousUniform);
-            */
             SimDistribution.I.Initialize(Guid.NewGuid().GetHashCode());
 
             Log.I($"Global seed is {SimDistribution.I.GlobalSeed}");
             Log.I($"Global Random is {SimDistribution.I.GlobalRandom}");
 
-            SimDistribution.I.TaskArrivalTime      = new ContinuousUniform(1, 10, SimDistribution.I.GlobalRandom);
-            SimDistribution.I.WorkerArrivalTime    = new ContinuousUniform(100, 100, SimDistribution.I.GlobalRandom);
+            SimDistribution.I.TaskArrivalTime      = new ContinuousUniform(1, 1, SimDistribution.I.GlobalRandom);
+            SimDistribution.I.WorkerArrivalTime    = new ContinuousUniform(1, 2, SimDistribution.I.GlobalRandom);
             SimDistribution.I.WorkerLeaveTime      = new ContinuousUniform(100, 100, SimDistribution.I.GlobalRandom); // never
             SimDistribution.I.FeedbackDistribution = new ContinuousUniform(1, 10, SimDistribution.I.GlobalRandom);
             SimDistribution.I.QualityGrade         = new ContinuousUniform(2, 10, SimDistribution.I.GlobalRandom);
-            SimDistribution.I.ResponseTime         = new ContinuousUniform(7, 20, SimDistribution.I.GlobalRandom);
+            SimDistribution.I.ResponseTime         = new ContinuousUniform(1, 1, SimDistribution.I.GlobalRandom);
 
             SimDistribution.I.GradeSystem          = new OriginalGradeCalc();
 
-
-            //var randomGenerator = new Random(globalSeed);
-
-
             for (int i = 0; i < NUM_OF_EXECUTIONS; i++)
             {
-
-
                 Log.I($"---------------------------- Simulation Execution {i} ----------------------------", ConsoleColor.DarkCyan);
                 _summaries[i] = SingleExecution();
             }

@@ -67,6 +67,12 @@ namespace TaskSimulation.Simulator
         public void Update(WorkerArrivalEvent @event)
         {
             var worker = _workersGenerator.GetNextWorker();
+
+            if (worker == null)
+            {
+                Log.Err("No more workers to create");
+                return;
+            }
             @event.Worker = worker;
             
             _activeWorkers.Add(worker);

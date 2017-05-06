@@ -4,7 +4,8 @@ namespace TaskSimulation.Workers
 {
     public class WorkersGenerator : IWorkersGenerator
     {
-        private const int INITIAL_NUM_OF_WORKERS = 20;
+        private static int INITIAL_POOL_SIZE = 10;
+
         private long _workerID = 0;
         private readonly List<Worker> _wokersPool;
         private int _position = 0;
@@ -13,7 +14,7 @@ namespace TaskSimulation.Workers
         {
             _wokersPool = new List<Worker>();
 
-            AddWorkers(INITIAL_NUM_OF_WORKERS);
+            AddWorkers(INITIAL_POOL_SIZE);
         }
 
         public void AddWorkers(int numOfWorkers)
@@ -27,7 +28,7 @@ namespace TaskSimulation.Workers
         public Worker GetNextWorker()
         {
             if (_position >= _wokersPool.Count)
-                return null;
+                AddWorkers(_wokersPool.Count);
 
             return _wokersPool[_position++];
         }

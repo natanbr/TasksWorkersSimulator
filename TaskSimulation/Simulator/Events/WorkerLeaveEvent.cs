@@ -13,10 +13,5 @@
         {
             visitor.Update(this);
         }
-
-       /* public override string ToString()
-        {
-            return $"{this.GetType().Name.SpaceCapitals()}";
-        }*/
     }
 }
