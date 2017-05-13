@@ -9,13 +9,12 @@ namespace TaskSimulation.Simulator
 {
     /// <summary>
     /// Workers journal is responsible for the workers management
-    /// 
     /// </summary>
     class WorkersJournal : ISimulatable
     {
         private readonly List<Worker> _activeWorkers;
         private readonly IWorkersGenerator _workersGenerator;
-        //public event Action<Worker> OnNewWorkerArrived;
+        private const int NUM_OF_WORKERS = 1;
 
         public WorkersJournal(int initialNumOfWorkers)
         {
@@ -46,7 +45,7 @@ namespace TaskSimulation.Simulator
                 return null;
 
             var chooseAlgo = new ChooseHighestGrade(); 
-            var workers = chooseAlgo.ChooseWorkers(_activeWorkers, 1);  // TODO assumption: chose only 1 worker
+            var workers = chooseAlgo.ChooseWorkers(_activeWorkers, NUM_OF_WORKERS);
 
             // Assign the task to each worker
             workers?.ForEach(worker =>

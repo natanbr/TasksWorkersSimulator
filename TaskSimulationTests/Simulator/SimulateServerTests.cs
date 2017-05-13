@@ -17,7 +17,7 @@ namespace TaskSimulationTests.Simulator
         double _maxSimulationTime = 10;
 
         [TestMethod()]
-        public void SimulateServerTest()
+        public void SimulateKnownParamsTest()
         {
             _initialNumOfWorkers = 1;
             _maxSimulationTime = 5;
@@ -37,8 +37,9 @@ namespace TaskSimulationTests.Simulator
             Assert.AreEqual(2, executionSummary.FinishedTasksForSingleExecution);
             Assert.AreEqual(5, executionSummary.TotalTasksForSingleExecution);
         }
+
         [TestMethod()]
-        public void SimulateServerTest2()
+        public void SimulateWithGlobalSeedTest()
         {
             _initialNumOfWorkers = 1;
             _maxSimulationTime = 100; // Mast me much larger then the initial pool size (10)
@@ -61,7 +62,7 @@ namespace TaskSimulationTests.Simulator
 
 
         [TestMethod()]
-        public void SeedTest()
+        public void SeedUsageTest()
         {
             var randomGen = new Random(5);
             var distWithSeed = new ContinuousUniform(1, 10000, randomGen);
@@ -71,7 +72,7 @@ namespace TaskSimulationTests.Simulator
         }
 
         [TestMethod()]
-        public void DistTest()
+        public void DifferentSeedDifferentResultTest()
         {
             SimDistribution.I.Initialize(Guid.NewGuid().GetHashCode());
             SimDistribution.I.TaskArrivalTime = new ContinuousUniform(1, 5, SimDistribution.I.GlobalRandom);

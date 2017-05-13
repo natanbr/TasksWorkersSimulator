@@ -7,6 +7,7 @@
 
         public WorkerArrivalEvent(SimulationEventMan eventMan, double arriveAt) : base(arriveAt)
         {
+
             EventMan = eventMan;
         }
 

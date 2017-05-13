@@ -42,8 +42,8 @@ namespace TaskSimulation.Simulator
         {
             if (_unassignedTasks.Count > 0)
             {
-                Log.I("There are more tasks then workers");
-                @event.Worker.Assign(_unassignedTasks[0]);
+                Log.I("There are more tasks then workers..");
+                @event.Worker?.Assign(_unassignedTasks[0]);
             }
         }
 

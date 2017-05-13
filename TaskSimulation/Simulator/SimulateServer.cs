@@ -49,8 +49,8 @@ namespace TaskSimulation.Simulator
                 Log.I();
                 Log.Event( $"{nextEvent} at time {SimulationClock}");
 
-                nextEvent.Accept(_tasksJournal);
                 nextEvent.Accept(_workersJournal);
+                nextEvent.Accept(_tasksJournal);
                 nextEvent.Accept(Utilization);
 
                 PrintSimulationState();

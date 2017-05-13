@@ -9,9 +9,7 @@ namespace TaskSimulation.ChooseAlgorithms
     {
         double _runningAvrg = 0.5;
         private const int MAX_NUMBER_OF_TASKS = 10;
-        private const int RESPONCE_TIME= 11;
-        private const int INITIAL_GRADE = 5;
-       
+        private const int INITIAL_GRADE = 5;       
 
         public double GetFinalGrade(Grade grade)
         {
@@ -44,22 +42,20 @@ namespace TaskSimulation.ChooseAlgorithms
         {
             var prevFeedbackGrade = grade.FeedbackGrade;
             var prevQualityGrade = grade.QualityGrade;
-            //var prevResponseGrade = grade.ResponseGrade;
             var prevTotal = grade.ResponseGrade;
 
             var newFeedbackGrade = SimDistribution.I.FeedbackDistribution.Sample();
             var newQualityGrade =  SimDistribution.I.QualityGrade.Sample();
-            //var newResponseGrade = DistFactory.ResponseGrade.Sample();
 
             grade.FeedbackGrade = (int)((_runningAvrg) * newFeedbackGrade + (1 - _runningAvrg) * prevFeedbackGrade);
             grade.QualityGrade =  (int)((_runningAvrg) * newQualityGrade +  (1 - _runningAvrg) * prevQualityGrade);
-            //grade.ResponseGrade = (int)((_runningAvrg) * newResponseGrade + (1 - _runningAvrg) * prevResponseGrade);
+
             var total = GetFinalGrade(grade);
 
             Log.D($"Grade Updated (R, F, Q, N, G)" +
                               $" Prev (x,{prevFeedbackGrade},{prevQualityGrade},x,{prevTotal}) " +
                               $"Rand (x,{(int)newFeedbackGrade},{(int)newQualityGrade},x ,x) " +
-                              $"final({grade.ResponseGrade},{grade.FeedbackGrade},{grade.QualityGrade},{grade.NumberOfTasksGrade},{total})");
+                              $"Final({grade.ResponseGrade},{grade.FeedbackGrade},{grade.QualityGrade},{grade.NumberOfTasksGrade},{total})");
             grade.TotalGrade = total;
 
             return grade;
@@ -74,6 +70,5 @@ namespace TaskSimulation.ChooseAlgorithms
         {
             return INITIAL_GRADE;
         }
-
     }
 }
