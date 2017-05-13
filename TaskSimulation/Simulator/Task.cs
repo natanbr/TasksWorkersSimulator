@@ -7,20 +7,22 @@ namespace TaskSimulation.Simulator
 {
     public class Task
     {
+        #region Consts
+
         public static int TASK_ID = 0;
         public const int NOT_STARTED = -1;
-        //public int Progress { get; private set; }
 
-        private int _eventCode;
+        #endregion
+        
+        private readonly int _eventCode;
 
         public double CreatedTime { get; set; }
         public double StartTime { get; private set; }
-
         public double EndTime { get; private set; }
 
         public event Action<Worker> OnTaskAssigned;
 
-        public Task(TaskArrivalEvent @event)
+        public Task()
         {
             EndTime = NOT_STARTED;
             StartTime = NOT_STARTED;
@@ -38,7 +40,6 @@ namespace TaskSimulation.Simulator
         {
             EndTime = SimulateServer.SimulationClock;
         }
-
 
         public override string ToString()
         {

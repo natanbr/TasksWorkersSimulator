@@ -36,13 +36,12 @@ namespace TaskSimulation.Simulator
             }
 
             _activeWorkers.Add(newWorker);
-
         }
 
-        public List<Worker> AssignTask(Task task)
+        public void AssignTask(Task task)
         {
             if (_activeWorkers.Count <= 0)
-                return null;
+                return;
 
             var chooseAlgo = new ChooseHighestGrade(); 
             var workers = chooseAlgo.ChooseWorkers(_activeWorkers, NUM_OF_WORKERS);
@@ -53,10 +52,7 @@ namespace TaskSimulation.Simulator
                 worker?.Assign(task);
                 Log.Event($"{worker} has been assigned to {task}");
             });
-
-            return workers;
         }
-         
 
         public List<Worker> ActiveWorkers
         {
@@ -97,17 +93,17 @@ namespace TaskSimulation.Simulator
         {
             var task = @event.Task;
 
-            var assignedWorkers = AssignTask(task);
+            AssignTask(task);
 
-            assignedWorkers.ForEach(worker =>
+            task.OnTaskAssigned += w =>
             {
                 // Assumption the simulator clock is always updated to current time
                 var simClock = SimulateServer.SimulationClock;
 
                 // TODO calc using worker's data
                 var finishIn = SimDistribution.I.ResponseTime.Sample();
-                @event.EventMan.AddEvent(new TaskFinishedEvent(task, worker, simClock + finishIn));
-            });
+                @event.EventMan.AddEvent(new TaskFinishedEvent(task, w, simClock + finishIn));
+            };
         }
 
         public void Update(TaskFinishedEvent @event)

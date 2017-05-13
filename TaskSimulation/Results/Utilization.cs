@@ -73,26 +73,42 @@ namespace TaskSimulation.Results
         /// <returns></returns>
         public double GetSystemUtilization()
         {
-            var systemWorked = _workers.Sum(w =>w.Statistics.BusyTime);
-            var systemUtilization = (systemWorked /_workers.Count)/SimulateServer.SimulatorMaxRunTime;
+            var sumWorkersWorkedTime = _workers.Sum(w =>w.Statistics.BusyTime);
+            var systemUtilization = (sumWorkersWorkedTime /_workers.Count)/SimulateServer.SimulationClock;
+
+            Log.I($"System utilization is: (sum Workers Worked Time/#workers)/Simulation Final Time");
             Log.I($"System utilization is: " +
-                  $"({systemWorked}/{_workers.Count})/{SimulateServer.SimulatorMaxRunTime} = {systemUtilization * 100:N2}%");
+                  $"({sumWorkersWorkedTime}/{_workers.Count})/{SimulateServer.SimulationClock} = {systemUtilization * 100:N2}%");
             return systemUtilization;
         }
 
         public double TaskWereInWaitList()
         {
-            var totalWaitTime = _tasks.Sum(t =>
+            var sumTasksWaitTime = _tasks.Sum(t =>
             {
                 if (t.StartTime != -1)
                     return t.StartTime - t.CreatedTime;
 
+                // Task was not finished
                 return SimulateServer.SimulationClock - t.CreatedTime;
             });
-            var totalSystemTime = SimulateServer.SimulatorMaxRunTime * _tasks.Count;
-            var total = totalWaitTime / totalSystemTime;
+
+            var sumTasksExistsTime = _tasks.Sum(t =>
+            {
+                Log.I($"{t} - C:{t.CreatedTime}  S:{t.StartTime}  F:{t.EndTime}");
+
+                if (t.EndTime != -1)
+                    return t.EndTime - t.CreatedTime;
+                
+                // Task was not finished
+                return SimulateServer.SimulationClock - t.CreatedTime;
+            });
+
+            var total = sumTasksWaitTime / sumTasksExistsTime;
+
+            Log.I($"Task were waiting: (tasks sum wait time) / (sum of time tasks exists)");
             Log.I($"Task were waiting: " +
-                  $"{totalWaitTime}/{totalSystemTime} = {total * 100:N2}%");
+                  $"{sumTasksWaitTime}/{sumTasksExistsTime} = {total * 100:N2}%");
             return total;
         }
     }

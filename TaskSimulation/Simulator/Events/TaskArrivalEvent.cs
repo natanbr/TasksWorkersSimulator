@@ -8,7 +8,7 @@
         public TaskArrivalEvent(SimulationEventMan eventMan, double arriveAt) : base(arriveAt)
         {
             EventMan = eventMan;
-            Task = new Task(this);
+            Task = new Task();
         }
 
         public override void Accept(ISimulatable visitor)

@@ -49,12 +49,14 @@ namespace TaskSimulation
 
         public void RemoveTask(Task task)
         {
-            Log.Event($"{this} finished {task}, duration: {task.EndTime - task.StartTime}");
+            var time = SimulateServer.SimulationClock;
+
+            Log.Event($"{this} finished {task}, duration: {time - task.StartTime}");
             _queuedTasks.Remove(task);
             _working = false;
-            Statistics.BusyTime += task.EndTime - task.StartTime;
+            Statistics.BusyTime += time - task.StartTime;
 
-            Grade = SimDistribution.I.GradeSystem.UpdateOnTaskRemoved(Grade, task.EndTime - task.StartTime);
+            Grade = SimDistribution.I.GradeSystem.UpdateOnTaskRemoved(Grade, time - task.StartTime);
             Grade = SimDistribution.I.GradeSystem.GenerateRandomGrade(Grade);
 
             // Start work on the next task
