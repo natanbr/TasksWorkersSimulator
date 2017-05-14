@@ -8,7 +8,7 @@ namespace TaskSimulation.Simulator.Workers
         private readonly List<Worker> _wokersPool;
         private int _position = 0;
         private const int INITIAL_POOL_SIZE = 10;          // todo move to settings file
-        private WorkersQualityDistribution _qualities;
+        private readonly WorkersQualityDistribution _qualities;
 
         public WorkersGenerator(WorkersQualityDistribution qualities)
         {

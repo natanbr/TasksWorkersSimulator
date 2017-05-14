@@ -13,7 +13,7 @@ namespace TaskSimulation.Simulator
         private TasksJournal _tasksJournal;
         private WorkersJournal _workersJournal;
         public static double SimulatorMaxRunTime { get; private set; }
-        private SimulationEventMan _simulationEvents;
+        private readonly SimulationEventMan _simulationEvents;
         public Utilization Utilization { get; private set; }
 
         public SimulateServer(double maxSimulationTime = Int32.MaxValue)
@@ -30,12 +30,12 @@ namespace TaskSimulation.Simulator
             Log.D("* * * * * * * Init * * * * * * *");
             Task.TASK_ID = 0;
 
-            _simulationEvents.InitializeEvents(1, 1);
+            _simulationEvents.InitializeGenesisEvents();
 
             _tasksJournal = new TasksJournal();
 
-            _workersJournal = new WorkersJournal(initialNumOfWorkers);
-            Utilization.AddWorkers(_workersJournal.ActiveWorkers);
+            _workersJournal = new WorkersJournal();
+            //Utilization.AddWorkers(_workersJournal.ActiveWorkers);
 
             Log.D("* * * * * * * Init * * * * * * *");
         }
@@ -52,7 +52,7 @@ namespace TaskSimulation.Simulator
 
                 SimulationClock = nextEvent.ArriveTime;
                 Log.I();
-                Log.Event( $"{nextEvent} at time {SimulationClock}");
+                Log.Event( $"{nextEvent} at time {SimulationClock,-5:##.##}");
 
                 if (nextEvent is TaskArrivalEvent || nextEvent is TaskFinishedEvent)
                 {

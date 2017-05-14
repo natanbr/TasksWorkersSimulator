@@ -6,9 +6,10 @@ using TaskSimulation.Simulator.Workers;
 
 namespace TaskSimulation.Simulator.Tasks
 {
-    public class TasksJournal : ISimulatable
+    public class 
+        TasksJournal : ISimulatable
     {
-        private List<Task> _unassignedTasks;
+        private readonly List<Task> _unassignedTasks;
 
         public TasksJournal()
         {
@@ -32,7 +33,6 @@ namespace TaskSimulation.Simulator.Tasks
             {
                 AddFinisheEvent(@event, task, w);
             };
-
         }
 
         public void Update(TaskFinishedEvent @event)

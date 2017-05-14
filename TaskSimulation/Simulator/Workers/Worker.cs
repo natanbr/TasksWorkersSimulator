@@ -49,7 +49,7 @@ namespace TaskSimulation.Simulator.Workers
         {
             var time = SimulateServer.SimulationClock;
 
-            Log.Event($"{this} finished {task}, duration: {time - task.StartTime}");
+            Log.Event($"{this} finished {task}, duration: {time - task.StartTime,-5:##.##}");
             _tasks.Remove(task);
             IsWorking = false;
 

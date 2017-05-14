@@ -17,7 +17,7 @@ namespace TaskSimulation.Simulator.Workers
             // Generate private random for worker
             var privateRandom = new Random(SimDistribution.I.GlobalRandom.Next());
 
-            //TODO
+            //TODO get type from input file
             Feedback        = new Normal(qualies.FeedbackMean, qualies.FeedbackStd, privateRandom);
             JobQuality      = new Normal(qualies.QualityMean,  qualies.QualityStd,  privateRandom);
             ResponseTime    = new Normal(qualies.ResponseMean,  qualies.ResponseStd,  privateRandom);
