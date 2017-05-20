@@ -17,9 +17,12 @@
             visitor.Update(this);
         }
 
-        /*public override string ToString()
+        public override string ToString()
         {
-            return $"{this.GetType().Name.SpaceCapitals()}";
-        }*/
+            if (Worker.IsOnline())
+                return $"{Worker} Finished task {Task}";
+
+            return $"Removing {Task} (Worker {Worker} left)";
+        }
     }
 }

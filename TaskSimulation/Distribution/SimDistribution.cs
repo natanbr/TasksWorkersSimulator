@@ -30,51 +30,6 @@ namespace TaskSimulation.Distribution
         public IContinuousDistribution QualityGrade { get; set; }
         public IContinuousDistribution ResponseTime { get; set; }
 
-        /*public static DistributionType FeedbackDistributionType { get; set; }
-        public static DistributionType QualityGradeType { get; set; }
-        public static DistributionType ResponseTimeType { get; set; }
-
-        public class GradeFactory
-        {
-            private Random _rand;
-
-            public GradeFactory()
-            {
-                var seed = GlobalRandom.Next();
-                _rand = new Random(seed);
-            }
-
-            public IContinuousDistribution GetContinuousDistribution(Type type, params double[] param)
-            {
-                return (IContinuousDistribution)Activator.CreateInstance(type, param);
-            }
-        }
-
-        public class GradesDist
-        {
-            private int _seed;
-            private Type _iContinuousType;
-
-            public GradesDist(Type iContinuousType, int seed)
-            {
-                _seed = seed;
-                _iContinuousType = iContinuousType;
-            }
-
-            public IContinuousDistribution FeedbackDistribution { get; set; }
-            public IContinuousDistribution QualityGrade { get; set; }
-            public IContinuousDistribution ResponseTime { get; set; }
-        }
-
-             public enum DistributionType
-        {
-            Normal,
-            Exponential,
-            Uniform,
-            Test,
-        }
-
-    */
         public IGradeCalcAlgo GradeSystem { get; set; }
 
        

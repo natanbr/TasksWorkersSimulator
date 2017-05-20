@@ -16,7 +16,7 @@ namespace TaskSimulation.Simulator.Events
             _events = new PriorityQueue<AEvent>();
         }
 
-        public void InitializeEvents(int tasks, int workers)
+        public void InitializeEvents(int tasks = 1, int workers = 1)
         {
             for(var t = 0; t < tasks; t++)
                 AddEvent(new TaskArrivalEvent(this, 0));
@@ -28,8 +28,20 @@ namespace TaskSimulation.Simulator.Events
         public void AddEvent(AEvent newEvent)
         {
             var msg = $"Adding {newEvent} at time: {newEvent.ArriveTime,-7:##0.###}";
+
+            if (newEvent.ArriveTime >= double.MaxValue)
+                Log.Err("!!! time up !!");
+
             Log.D(msg);
+
+            //var prevEventTime = _events.Peek().ArriveTime;
+
             _events.Enqueue(newEvent);
+
+            //if (newEvent.ArriveTime < prevEventTime)
+            var cons = _events.IsConsistent();
+            if (!cons)
+                Log.Err("not consist");
         }
 
         public AEvent GetNextEvent()
@@ -37,6 +49,8 @@ namespace TaskSimulation.Simulator.Events
             if (_events.Count() <= 0) return null;
 
             var deqEvent =  _events.Dequeue();
+
+            // TODO replace with generic code, if arrival event generate same type of event
 
             if (deqEvent is TaskArrivalEvent)
                 AddEvent(new TaskArrivalEvent(this, deqEvent.ArriveTime + SimDistribution.I.TaskArrivalTime.Sample()));

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using MathNet.Numerics.Distributions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TaskSimulation;
@@ -22,9 +21,9 @@ namespace TaskSimulationTests.Simulator
             _initialNumOfWorkers = 1;
             _maxSimulationTime = 5;
 
-            SimDistribution.I.TaskArrivalTime = new ContinuousUniform(1, 1);
+            SimDistribution.I.TaskArrivalTime   = new ContinuousUniform(1, 1);
             SimDistribution.I.WorkerArrivalTime = new ContinuousUniform(100, 100); // never
-            SimDistribution.I.WorkerLeaveTime = new ContinuousUniform(100, 100); // never
+            SimDistribution.I.WorkerLeaveTime   = new ContinuousUniform(100, 100); // never
             SimDistribution.I.FeedbackDistribution = new ContinuousUniform(7, 7);
             SimDistribution.I.QualityGrade = new ContinuousUniform(7, 7);
             SimDistribution.I.ResponseTime = new ContinuousUniform(3, 3);
@@ -32,17 +31,35 @@ namespace TaskSimulationTests.Simulator
 
             var executionSummary = SingleExecution();
 
-            Assert.AreEqual((double)6/8, executionSummary.TotalWorkersUtilization);
-            Assert.AreEqual((double)2/25, executionSummary.TotalTasksWait);
+            Assert.AreEqual((double)7 / 8, executionSummary.TotalWorkersUtilization);
             Assert.AreEqual(2, executionSummary.FinishedTasksForSingleExecution);
+            Assert.AreEqual((double)2 / 9, executionSummary.TotalTasksWait);
             Assert.AreEqual(5, executionSummary.TotalTasksForSingleExecution);
+        }
+
+        [TestMethod()]
+        public void SimulateWorkerLeaveTest()
+        {
+            _initialNumOfWorkers = 1;
+            _maxSimulationTime = 100;
+
+            SimDistribution.I.TaskArrivalTime = new Exponential(0.34, SimDistribution.I.GlobalRandom);
+            SimDistribution.I.ResponseTime = new Normal(5, 3 , SimDistribution.I.GlobalRandom);
+            SimDistribution.I.WorkerArrivalTime = new Exponential(0.8, SimDistribution.I.GlobalRandom);
+            SimDistribution.I.WorkerLeaveTime = new Exponential(0.01, SimDistribution.I.GlobalRandom);
+            SimDistribution.I.FeedbackDistribution = new ContinuousUniform(1, 10, SimDistribution.I.GlobalRandom);
+            SimDistribution.I.QualityGrade = new ContinuousUniform(2, 10, SimDistribution.I.GlobalRandom);
+
+
+            SimDistribution.I.GradeSystem = new OriginalGradeCalc();
+            var executionSummary = SingleExecution();
         }
 
         [TestMethod()]
         public void SimulateWithGlobalSeedTest()
         {
             _initialNumOfWorkers = 1;
-            _maxSimulationTime = 100; // Mast me much larger then the initial pool size (10)
+            _maxSimulationTime = 10; // Mast me much larger then the initial pool size (10)
             SimDistribution.I.Initialize(1);
 
             SimDistribution.I.TaskArrivalTime = new ContinuousUniform(1, 1, SimDistribution.I.GlobalRandom);
@@ -55,9 +72,9 @@ namespace TaskSimulationTests.Simulator
 
             var executionSummary = SingleExecution();
 
-            Assert.AreEqual(118, (int)(executionSummary.TotalWorkersUtilization * 100));
-            Assert.AreEqual(97, executionSummary.FinishedTasksForSingleExecution);
-            Assert.AreEqual(100, executionSummary.TotalTasksForSingleExecution);
+            Assert.AreEqual((int)((9 / 23.5) * 100), (int)(executionSummary.TotalWorkersUtilization * 100), "TotalWorkersUtilization");
+            Assert.AreEqual(3, executionSummary.FinishedTasksForSingleExecution, "FinishedTasksForSingleExecution");
+            Assert.AreEqual(10, executionSummary.TotalTasksForSingleExecution, "TotalTasksForSingleExecution");
         }
 
 

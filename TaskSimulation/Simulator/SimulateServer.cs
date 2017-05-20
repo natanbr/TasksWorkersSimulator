@@ -45,18 +45,32 @@ namespace TaskSimulation.Simulator
             while (nextEvent.ArriveTime < SimulatorMaxRunTime)
             {
                 // Update the simulation clock to the new event time
+                if (nextEvent.ArriveTime < 0)
+                    Log.Err("Time is < 0");
+
                 SimulationClock = nextEvent.ArriveTime;
                 Log.I();
                 Log.Event( $"{nextEvent} at time {SimulationClock}");
 
-                nextEvent.Accept(_workersJournal);
-                nextEvent.Accept(_tasksJournal);
+                if (nextEvent is TaskArrivalEvent || nextEvent is TaskFinishedEvent)
+                {
+                    nextEvent.Accept(_tasksJournal);
+                    nextEvent.Accept(_workersJournal);
+                }
+                else
+                {
+                    nextEvent.Accept(_workersJournal);
+                    nextEvent.Accept(_tasksJournal);
+                }
+
                 nextEvent.Accept(Utilization);
 
-                PrintSimulationState();
+                //PrintSimulationState();
 
                 nextEvent = _simulationEvents.GetNextEvent();
             }
+
+            PrintSimulationState();
         }
 
         public void PrintSimulationState()

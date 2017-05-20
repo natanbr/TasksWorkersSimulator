@@ -1,7 +1,4 @@
 ﻿using System;
-using TaskSimulation.Distribution;
-using TaskSimulation.Results;
-using TaskSimulation.Simulator.Events;
 
 namespace TaskSimulation.Simulator
 {
@@ -21,6 +18,7 @@ namespace TaskSimulation.Simulator
         public double EndTime { get; private set; }
 
         public event Action<Worker> OnTaskAssigned;
+        public event Action<Worker> OnAddedToWorker;
 
         public Task()
         {
@@ -29,9 +27,17 @@ namespace TaskSimulation.Simulator
             _eventCode = TASK_ID++;
         }
 
-        public void AssignedBy(Worker worker)
+        public void SetStateAddedTo(Worker worker)
+        {
+            OnAddedToWorker?.Invoke(worker);
+        }
+
+        public void SetStateAssignedBy(Worker worker)
         {
             StartTime = SimulateServer.SimulationClock;
+
+            if (StartTime > EndTime && EndTime != NOT_STARTED)
+                Log.Err($"StartTime > EndTime {StartTime} {EndTime}");
 
             OnTaskAssigned?.Invoke(worker);
         }

@@ -14,7 +14,7 @@ namespace TaskSimulation
         public bool WorkerStatus { get; private set; }
         public Grade Grade { get; set; }
         public WorkerStatistics Statistics;
-        private bool _working = false;
+        public bool IsWorking = false;
         //public event Action<Worker> OnWorkerNotAvailable;
 
         public Worker(long id)
@@ -41,6 +41,8 @@ namespace TaskSimulation
             // Add the task
             _queuedTasks.Add(task);
 
+            task.SetStateAddedTo(this);
+
             Grade = SimDistribution.I.GradeSystem.UpdateOnTaskAdd(Grade);
 
             TryDoWork();
@@ -53,7 +55,8 @@ namespace TaskSimulation
 
             Log.Event($"{this} finished {task}, duration: {time - task.StartTime}");
             _queuedTasks.Remove(task);
-            _working = false;
+            IsWorking = false;
+
             Statistics.BusyTime += time - task.StartTime;
 
             Grade = SimDistribution.I.GradeSystem.UpdateOnTaskRemoved(Grade, time - task.StartTime);
@@ -70,12 +73,22 @@ namespace TaskSimulation
 
         private void TryDoWork()
         {
-            if (_working || _queuedTasks.Count == 0) return;
+            if (IsWorking || _queuedTasks.Count == 0) return;
 
-            _queuedTasks[0].AssignedBy(this);
-            _working = true;
+            Log.I($"{this} starting work on {_queuedTasks[0]}");
+            _queuedTasks[0].SetStateAssignedBy(this);
+            IsWorking = true;
         }
 
+        public Task GetCurrentTask()
+        {
+            return _queuedTasks[0];
+        }
+
+        public bool IsOnline()
+        {
+            return Statistics.EndAt == -1;
+        }
     }
 
     

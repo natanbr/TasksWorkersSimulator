@@ -6,7 +6,26 @@ namespace TaskSimulation.Results
     {
         public double StartAt { get; set; }
         public double EndAt { get; set; }
-        public double BusyTime { get; set; }
+
+        private double _busyTime { get; set; }
+
+        public double BusyTime
+        {
+            get
+            {
+                return _busyTime;
+            }
+            set
+            {
+                if (value >= 0)
+                    _busyTime = value;
+                else
+                {
+                    Log.Err("Value cant be < 0!!");
+                }
+            }
+        }
+
         public double FreeTime => TotalTime - BusyTime;
 
         public double TotalTime

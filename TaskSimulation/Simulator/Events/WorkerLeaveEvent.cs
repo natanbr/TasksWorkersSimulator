@@ -13,5 +13,10 @@
         {
             visitor.Update(this);
         }
+
+        public override string ToString()
+        {
+            return $"{Worker} " + base.ToString();
+        }
     }
 }

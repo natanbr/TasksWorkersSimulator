@@ -42,6 +42,18 @@ namespace TaskSimulation.Results
 
         public void Update(WorkerLeaveEvent @event) { }
 
+        private double GetWorkersWorkedTime()
+        {
+            var sumWorkersWorkedTime = _workers.Sum(w =>
+            {
+                // The last not finished task
+                var lastTask = (w.IsWorking && w.IsOnline()) ? SimulateServer.SimulationClock - w.GetCurrentTask().StartTime : 0;
+
+                return w.Statistics.BusyTime + lastTask;
+            });
+
+            return sumWorkersWorkedTime;
+        }
 
         public int GetNumberOfFinishedTasks()
         {
@@ -59,10 +71,16 @@ namespace TaskSimulation.Results
 
         public double GetTotalWorkersUtilization()
         {
-            var workersWorked = _workers.Sum(w => w.Statistics.BusyTime);
-            var workersTotalTime = _workers.Sum(w => w.Statistics.TotalTime);
-            var workerUtilization = workersWorked / workersTotalTime;
-            Log.I($"Workers utilization is {workersWorked}/{workersTotalTime} = {workerUtilization*100:N2}%");
+            var sumWorkersBusy = GetWorkersWorkedTime();
+            var workersTotalTime = _workers.Sum(w =>
+            {
+                Log.I($"{w} (S:{w.Statistics.StartAt,-6:#0.###}, E:{w.Statistics.EndAt,-6:#0.###}) B:{w.Statistics.BusyTime,-6:#0.###} T:{w.Statistics.TotalTime,-6:#0.###}");
+                return w.Statistics.TotalTime;
+            });
+
+            var workerUtilization = sumWorkersBusy / workersTotalTime;
+            Log.I($"Workers utilization is (sum workers work time)/(sum workers work time)= workerUtilization");
+            Log.I($"Workers utilization is {sumWorkersBusy}/{workersTotalTime} = {workerUtilization*100:N2}%");
             return workerUtilization;
         }
 
@@ -73,7 +91,8 @@ namespace TaskSimulation.Results
         /// <returns></returns>
         public double GetSystemUtilization()
         {
-            var sumWorkersWorkedTime = _workers.Sum(w =>w.Statistics.BusyTime);
+            var sumWorkersWorkedTime = GetWorkersWorkedTime();
+
             var systemUtilization = (sumWorkersWorkedTime /_workers.Count)/SimulateServer.SimulationClock;
 
             Log.I($"System utilization is: (sum Workers Worked Time/#workers)/Simulation Final Time");
@@ -95,8 +114,6 @@ namespace TaskSimulation.Results
 
             var sumTasksExistsTime = _tasks.Sum(t =>
             {
-                Log.I($"{t} - C:{t.CreatedTime}  S:{t.StartTime}  F:{t.EndTime}");
-
                 if (t.EndTime != -1)
                     return t.EndTime - t.CreatedTime;
                 

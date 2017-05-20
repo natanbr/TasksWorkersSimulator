@@ -49,8 +49,8 @@ namespace TaskSimulation.Simulator
             // Assign the task to each worker
             workers?.ForEach(worker =>
             {
+                Log.Event($"Adding {task} to {worker}");
                 worker?.Assign(task);
-                Log.Event($"{worker} has been assigned to {task}");
             });
         }
 
@@ -95,21 +95,14 @@ namespace TaskSimulation.Simulator
 
             AssignTask(task);
 
-            task.OnTaskAssigned += w =>
-            {
-                // Assumption the simulator clock is always updated to current time
-                var simClock = SimulateServer.SimulationClock;
-
-                // TODO calc using worker's data
-                var finishIn = SimDistribution.I.ResponseTime.Sample();
-                @event.EventMan.AddEvent(new TaskFinishedEvent(task, w, simClock + finishIn));
-            };
         }
 
         public void Update(TaskFinishedEvent @event)
         {
             var worker = @event.Worker;
             var task = @event.Task;
+
+            if (!worker.IsOnline()) return;
 
             worker.RemoveTask(task);
         }
