@@ -1,6 +1,7 @@
 using System;
+using TaskSimulation.Utiles;
 
-namespace TaskSimulation.Simulator
+namespace TaskSimulation.Simulator.Events
 {
     public abstract class AEvent : IComparable<AEvent>
     {

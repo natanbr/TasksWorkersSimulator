@@ -1,7 +1,6 @@
-﻿using TaskSimulation.Simulator;
-using TaskSimulation.Simulator.Events;
+﻿using TaskSimulation.Simulator.Events;
 
-namespace TaskSimulation
+namespace TaskSimulation.Simulator
 {
     public interface ISimulatable
     {

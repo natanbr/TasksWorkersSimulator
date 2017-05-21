@@ -53,10 +53,10 @@ namespace TaskSimulation.Simulator.Events
             // TODO replace with generic code, if arrival event generate same type of event
 
             if (deqEvent is TaskArrivalEvent)
-                AddEvent(new TaskArrivalEvent(this, deqEvent.ArriveTime + SimDistribution.I.TaskArrivalTime.Sample()));
+                AddEvent(new TaskArrivalEvent(this, deqEvent.ArriveTime + SimDistribution.I.TaskArrivalRate.Sample()));
 
             if (deqEvent is WorkerArrivalEvent)
-                AddEvent(new WorkerArrivalEvent(this, deqEvent.ArriveTime + SimDistribution.I.WorkerArrivalTime.Sample()));
+                AddEvent(new WorkerArrivalEvent(this, deqEvent.ArriveTime + SimDistribution.I.WorkerArrivalRate.Sample()));
 
 
             return deqEvent;

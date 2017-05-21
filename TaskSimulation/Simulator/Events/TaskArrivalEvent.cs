@@ -1,4 +1,6 @@
-﻿namespace TaskSimulation.Simulator.Events
+﻿using TaskSimulation.Simulator.Tasks;
+
+namespace TaskSimulation.Simulator.Events
 {
     public class TaskArrivalEvent : AEvent
     {

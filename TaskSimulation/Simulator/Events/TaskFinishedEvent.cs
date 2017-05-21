@@ -1,4 +1,7 @@
-﻿namespace TaskSimulation.Simulator.Events
+﻿using TaskSimulation.Simulator.Tasks;
+using TaskSimulation.Simulator.Workers;
+
+namespace TaskSimulation.Simulator.Events
 {
     public class TaskFinishedEvent : AEvent
     {

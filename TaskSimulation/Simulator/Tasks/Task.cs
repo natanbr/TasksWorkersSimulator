@@ -1,6 +1,7 @@
 ﻿using System;
+using TaskSimulation.Simulator.Workers;
 
-namespace TaskSimulation.Simulator
+namespace TaskSimulation.Simulator.Tasks
 {
     public class Task
     {

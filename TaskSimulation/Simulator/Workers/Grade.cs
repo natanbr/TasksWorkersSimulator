@@ -1,4 +1,4 @@
-﻿namespace TaskSimulation.Workers
+﻿namespace TaskSimulation.Simulator.Workers
 {
     public class Grade
     {

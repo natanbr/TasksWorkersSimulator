@@ -7,6 +7,8 @@ using TaskSimulation.ChooseAlgorithms;
 using TaskSimulation.Distribution;
 using TaskSimulation.Results;
 using TaskSimulation.Simulator;
+using TaskSimulation.Simulator.Workers;
+using TaskSimulation.Utiles;
 
 namespace TaskSimulationCmd
 {
@@ -24,43 +26,47 @@ namespace TaskSimulationCmd
         // - What are the parameters for the Distributions?
         // - What will happen to all the tasks in the workers queue when worker leave???
         // TODOs
-        // - SimulateServerTest2 returns unrealistic results
         // - Add Personal seed and params for workers grade
         // - When Worker didn't complete the task and left -> End time = worker left
 
-        const int NUM_OF_EXECUTIONS = 1;
-        static readonly ExecutionSummary[] _summaries = new ExecutionSummary[NUM_OF_EXECUTIONS];
+        static ExecutionSummary[] _summaries;
 
-        const int INITIAL_NUM_OF_WORKERS = 100;
-        const double MAX_SIMULATION_TIME = 1 * 1000;
 
         static void Main()
         {
             SimDistribution.I.Initialize(Guid.NewGuid().GetHashCode());
 
+            var execData = XmlUtils.Load<InputXmlShema>(@"C:\Users\nbraslav\P4_Local\TaskSimulation\TaskSimulation\bin\Debug\SimExe.xml");
+
+            if (execData?.Executions == null || execData?.Executions?.Length <= 0)
+            {
+                Log.Err("File load failed, exitting execution.");
+                XmlUtils.Save("", new InputXmlShema());
+                return;
+            }
+
+            var executions = execData.Executions.Length;
+
+            _summaries = new ExecutionSummary[executions];
+
             Log.I($"Global seed is {SimDistribution.I.GlobalSeed}");
             Log.I($"Global Random is {SimDistribution.I.GlobalRandom}");
 
-            SimDistribution.I.TaskArrivalTime       = new Exponential(0.34, SimDistribution.I.GlobalRandom);
-            SimDistribution.I.ResponseTime          = new Normal(5 * 1000, 3 * 1000, SimDistribution.I.GlobalRandom);
-             
-            SimDistribution.I.WorkerArrivalTime     = new Exponential(0.1, SimDistribution.I.GlobalRandom);
-            SimDistribution.I.WorkerLeaveTime       = new Exponential(0.01, SimDistribution.I.GlobalRandom);
-            SimDistribution.I.FeedbackDistribution  = new ContinuousUniform(1, 10, SimDistribution.I.GlobalRandom);
-            SimDistribution.I.QualityGrade          = new ContinuousUniform(2, 10, SimDistribution.I.GlobalRandom);
-
-
             SimDistribution.I.GradeSystem = new OriginalGradeCalc();
 
-            for (int i = 0; i < NUM_OF_EXECUTIONS; i++)
+            for (int i = 0; i < executions; i++)
             {
-                Log.I($"---------------------------- Simulation Execution {i} ----------------------------",
-                    ConsoleColor.DarkCyan);
+                // Load the execution data for each iteration
+                SimDistribution.I.LoadData(i, execData);
+                var initialNumOfWorkers = execData.Executions[i].InitialNumOfWorkers;
+                var maxSimulationTime = execData.Executions[i].MaxSimulationTime;
+
+                Log.I($"------------ Simulation Execution {i} ------------", ConsoleColor.DarkCyan);
 
                 var sw = new Stopwatch();
 
                 sw.Start();
-                _summaries[i] = SingleExecution();
+                _summaries[i] = SingleExecution(maxSimulationTime, initialNumOfWorkers);
 
                 sw.Stop();
                 var elapsed = sw.Elapsed;
@@ -72,11 +78,11 @@ namespace TaskSimulationCmd
             _summaries.ToList().ForEach(v => Log.I(v.ToString()));
         }
 
-        public static ExecutionSummary SingleExecution()
+        public static ExecutionSummary SingleExecution(double time, long workers)
         {
-            var simulator = new SimulateServer(MAX_SIMULATION_TIME);
+            var simulator = new SimulateServer(time);
 
-            simulator.Initialize(INITIAL_NUM_OF_WORKERS);
+            simulator.Initialize(workers);
 
             simulator.Start();
 
@@ -86,7 +92,7 @@ namespace TaskSimulationCmd
 
             var executionStatistics = new ExecutionSummary()
             {
-                ExecutionTime = MAX_SIMULATION_TIME,
+                ExecutionTime = time,
 
                 TotalWorkersUtilization = simulator.Utilization.GetTotalWorkersUtilization(),
                 TotalSystemUtilization = simulator.Utilization.GetSystemUtilization(),
