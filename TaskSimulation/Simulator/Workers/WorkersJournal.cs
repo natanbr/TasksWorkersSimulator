@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TaskSimulation.ChooseAlgorithms;
 using TaskSimulation.Distribution;
 using TaskSimulation.Simulator.Events;
-using TaskSimulation.Workers;
+using TaskSimulation.Simulator.Tasks;
 
-namespace TaskSimulation.Simulator
+namespace TaskSimulation.Simulator.Workers
 {
     /// <summary>
     /// Workers journal is responsible for the workers management
@@ -14,11 +13,11 @@ namespace TaskSimulation.Simulator
     {
         private readonly List<Worker> _activeWorkers;
         private readonly IWorkersGenerator _workersGenerator;
-        private const int NUM_OF_WORKERS = 1;
+        private const int NUM_OF_WORKERS_ON_TASK = 1;   // todo move to settings file
 
-        public WorkersJournal(int initialNumOfWorkers)
+        public WorkersJournal(long initialNumOfWorkers)
         {
-            _workersGenerator = new WorkersGenerator();
+            _workersGenerator = new WorkersGenerator(SimDistribution.I.WorkersQualityDistribution);
             _activeWorkers = new List<Worker>();
 
             for (var i = 0; i < initialNumOfWorkers; i++)
@@ -44,13 +43,13 @@ namespace TaskSimulation.Simulator
                 return;
 
             var chooseAlgo = new ChooseHighestGrade(); 
-            var workers = chooseAlgo.ChooseWorkers(_activeWorkers, NUM_OF_WORKERS);
+            var workers = chooseAlgo.ChooseWorkers(_activeWorkers, NUM_OF_WORKERS_ON_TASK);
 
             // Assign the task to each worker
             workers?.ForEach(worker =>
             {
                 Log.Event($"Adding {task} to {worker}");
-                worker?.Assign(task);
+                worker?.AddTask(task);
             });
         }
 
@@ -75,7 +74,7 @@ namespace TaskSimulation.Simulator
             var simClock = SimulateServer.SimulationClock;
             worker.Statistics.StartAt = simClock;
 
-            var finishIn = SimDistribution.I.WorkerLeaveTime.Sample();
+            var finishIn = SimDistribution.I.WorkerLeaveRate.Sample();
             @event.EventMan.AddEvent(new WorkerLeaveEvent(worker, simClock + finishIn));
         }
 

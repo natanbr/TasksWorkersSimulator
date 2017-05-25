@@ -1,4 +1,6 @@
-﻿namespace TaskSimulation.Results
+﻿using TaskSimulation.Simulator;
+
+namespace TaskSimulation.Results
 {
     public interface IStatisticCollectorVisitor
     {

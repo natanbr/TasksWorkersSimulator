@@ -1,6 +1,7 @@
 ﻿using System;
 using TaskSimulation.Distribution;
-using TaskSimulation.Workers;
+using TaskSimulation.Simulator;
+using TaskSimulation.Simulator.Workers;
 
 namespace TaskSimulation.ChooseAlgorithms
 {
@@ -38,14 +39,15 @@ namespace TaskSimulation.ChooseAlgorithms
             return grade;
         }
 
-        public Grade GenerateRandomGrade(Grade grade)
+        public Grade GenerateRandomGrade(Worker worker)
         {
+            var grade = worker.Grade;
             var prevFeedbackGrade = grade.FeedbackGrade;
             var prevQualityGrade = grade.QualityGrade;
             var prevTotal = grade.ResponseGrade;
 
-            var newFeedbackGrade = SimDistribution.I.FeedbackDistribution.Sample();
-            var newQualityGrade =  SimDistribution.I.QualityGrade.Sample();
+            var newFeedbackGrade = worker.Distribution.Feedback.Sample();
+            var newQualityGrade = worker.Distribution.JobQuality.Sample();
 
             grade.FeedbackGrade = (int)((_runningAvrg) * newFeedbackGrade + (1 - _runningAvrg) * prevFeedbackGrade);
             grade.QualityGrade =  (int)((_runningAvrg) * newQualityGrade +  (1 - _runningAvrg) * prevQualityGrade);

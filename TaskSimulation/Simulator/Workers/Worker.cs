@@ -1,28 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using TaskSimulation.Distribution;
+﻿using TaskSimulation.Distribution;
 using TaskSimulation.Results;
-using TaskSimulation.Simulator;
-using TaskSimulation.Workers;
+using TaskSimulation.Simulator.Tasks;
 
-namespace TaskSimulation
+namespace TaskSimulation.Simulator.Workers
 {
     public class Worker
     {
         private long ID;
-        private readonly List<Task> _queuedTasks;
-        public bool WorkerStatus { get; private set; }
+        private readonly TasksQueue _tasks;
         public Grade Grade { get; set; }
-        public WorkerStatistics Statistics;
-        public bool IsWorking = false;
-        //public event Action<Worker> OnWorkerNotAvailable;
+        public WorkerStatistics Statistics { get; set; }
+        public WorkerDistribution Distribution { get; set; }
+        public bool IsWorking { get; private set; } = false;
 
-        public Worker(long id)
+        public Worker(long id, WorkerQualies qualies)
         {
-            Statistics = new WorkerStatistics();
-            WorkerStatus = true;
-            _queuedTasks = new List<Task>();
             ID = id;
+            _tasks = new TasksQueue();
+            Statistics = new WorkerStatistics();
+            Distribution = new WorkerDistribution(qualies);
 
             // The F,Q,R... will be used for next calc, Grade will be used as initial grade 
             Grade = new Grade()
@@ -36,16 +32,16 @@ namespace TaskSimulation
             Grade.TotalGrade = SimDistribution.I.GradeSystem.GetFinalGrade(Grade);
         }
 
-        public void Assign(Task task)
+        public void AddTask(Task task)
         {
             // Add the task
-            _queuedTasks.Add(task);
+            _tasks.Add(task);
 
             task.SetStateAddedTo(this);
 
             Grade = SimDistribution.I.GradeSystem.UpdateOnTaskAdd(Grade);
 
-            TryDoWork();
+            ContinueToNextTask();
         }
 
 
@@ -54,16 +50,16 @@ namespace TaskSimulation
             var time = SimulateServer.SimulationClock;
 
             Log.Event($"{this} finished {task}, duration: {time - task.StartTime}");
-            _queuedTasks.Remove(task);
+            _tasks.Remove(task);
             IsWorking = false;
 
-            Statistics.BusyTime += time - task.StartTime;
-
+            Statistics.UpdateWorkedTime(task);
+           
             Grade = SimDistribution.I.GradeSystem.UpdateOnTaskRemoved(Grade, time - task.StartTime);
-            Grade = SimDistribution.I.GradeSystem.GenerateRandomGrade(Grade);
+            Grade = SimDistribution.I.GradeSystem.GenerateRandomGrade(this);
 
             // Start work on the next task
-            TryDoWork();
+            ContinueToNextTask();
         }
 
         public override string ToString()
@@ -71,18 +67,21 @@ namespace TaskSimulation
             return $"Worker: {ID,-3:##}";
         }
 
-        private void TryDoWork()
+        private void ContinueToNextTask()
         {
-            if (IsWorking || _queuedTasks.Count == 0) return;
+            if (IsWorking || !_tasks.HasAvailableTask()) return;
 
-            Log.I($"{this} starting work on {_queuedTasks[0]}");
-            _queuedTasks[0].SetStateAssignedBy(this);
+            var nextTask = _tasks.GetFirst();
+
+            Log.I($"{this} starting work on {nextTask}");
+
+            nextTask.SetStateAssignedBy(this);
             IsWorking = true;
         }
 
         public Task GetCurrentTask()
         {
-            return _queuedTasks[0];
+            return _tasks.GetFirst();
         }
 
         public bool IsOnline()
@@ -90,6 +89,4 @@ namespace TaskSimulation
             return Statistics.EndAt == -1;
         }
     }
-
-    
 }

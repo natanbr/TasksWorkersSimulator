@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TaskSimulation.Simulator;
+using TaskSimulation.Simulator.Workers;
 
 namespace TaskSimulation.ChooseAlgorithms
 {

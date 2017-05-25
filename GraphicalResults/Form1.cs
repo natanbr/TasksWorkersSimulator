@@ -51,7 +51,7 @@ namespace GraphicalResults
             SimDistribution.I.FeedbackDistribution = new Normal(10, 10);
             SimDistribution.I.QualityGrade = new Normal(10, 10);
 
-            SimDistribution.I.TaskArrivalTime = new Exponential(20);
+            SimDistribution.I.TaskArrivalRate = new Exponential(20);
 
             SimDistribution.I.GradeSystem = new OriginalGradeCalc();
                         

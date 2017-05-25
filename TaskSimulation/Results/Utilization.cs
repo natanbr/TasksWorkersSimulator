@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using TaskSimulation.Simulator;
 using TaskSimulation.Simulator.Events;
+using TaskSimulation.Simulator.Tasks;
+using TaskSimulation.Simulator.Workers;
+
 //using Task = TaskSimulation.Simulator.Task;
 
 namespace TaskSimulation.Results
@@ -72,6 +75,7 @@ namespace TaskSimulation.Results
         public double GetTotalWorkersUtilization()
         {
             var sumWorkersBusy = GetWorkersWorkedTime();
+            Log.I($"(S=Start time, E=End time, B=Busy time, T=Total existing time");
             var workersTotalTime = _workers.Sum(w =>
             {
                 Log.I($"{w} (S:{w.Statistics.StartAt,-6:#0.###}, E:{w.Statistics.EndAt,-6:#0.###}) B:{w.Statistics.BusyTime,-6:#0.###} T:{w.Statistics.TotalTime,-6:#0.###}");

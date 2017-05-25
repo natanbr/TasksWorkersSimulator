@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using TaskSimulation.Distribution;
 using TaskSimulation.Simulator.Events;
+using TaskSimulation.Simulator.Workers;
 
-namespace TaskSimulation.Simulator
+namespace TaskSimulation.Simulator.Tasks
 {
     public class TasksJournal : ISimulatable
     {
@@ -54,7 +55,7 @@ namespace TaskSimulation.Simulator
 
                 Log.D("There are unassigned tasks, assigned this task to arrived worker", ConsoleColor.Magenta);
                 Log.Event($"Assign {_unassignedTasks[0]} to {@event.Worker}");
-                @event.Worker?.Assign(_unassignedTasks[0]);
+                @event.Worker?.AddTask(_unassignedTasks[0]);
                
             }
         }
@@ -69,7 +70,7 @@ namespace TaskSimulation.Simulator
             double finishIn = 0;
             do
             {
-                finishIn = SimDistribution.I.ResponseTime.Sample();
+                finishIn = worker.Distribution.ResponseTime.Sample();
             } while (finishIn < 0);
 
             var time = task.StartTime + finishIn;

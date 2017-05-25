@@ -1,4 +1,5 @@
-﻿using TaskSimulation.Workers;
+﻿using TaskSimulation.Simulator;
+using TaskSimulation.Simulator.Workers;
 
 namespace TaskSimulation.ChooseAlgorithms
 {
@@ -11,7 +12,7 @@ namespace TaskSimulation.ChooseAlgorithms
         Grade UpdateOnTaskAdd(Grade grade);
         Grade UpdateOnTaskRemoved(Grade grade, double responseTime);
 
-        Grade GenerateRandomGrade(Grade worker);
+        Grade GenerateRandomGrade(Worker worker);
         int GetMaxNumberOfTasks();
     }
 }

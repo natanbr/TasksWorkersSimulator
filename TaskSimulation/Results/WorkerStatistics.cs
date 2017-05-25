@@ -1,4 +1,5 @@
 ﻿using TaskSimulation.Simulator;
+using TaskSimulation.Simulator.Tasks;
 
 namespace TaskSimulation.Results
 {
@@ -7,7 +8,7 @@ namespace TaskSimulation.Results
         public double StartAt { get; set; }
         public double EndAt { get; set; }
 
-        private double _busyTime { get; set; }
+        private double _busyTime;
 
         public double BusyTime
         {
@@ -43,6 +44,11 @@ namespace TaskSimulation.Results
             StartAt = 0;
             EndAt = -1;
             BusyTime = 0;
+        }
+
+        public void UpdateWorkedTime(Task task)
+        {
+            BusyTime += SimulateServer.SimulationClock - task.StartTime;
         }
     }
 }
