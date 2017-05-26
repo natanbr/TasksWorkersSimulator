@@ -6,13 +6,13 @@ namespace TaskSimulation.Simulator.Events
     public abstract class AEvent : IComparable<AEvent>
     {
         public double ArriveTime { get; }
-       
+        //protected bool Periodic;
+
         protected AEvent(double arriveAt)
         {
             ArriveTime = arriveAt;
         }
 
-        //public abstract void Update();
 
         public int CompareTo(AEvent other)
         {

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
 using MathNet.Numerics.Distributions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TaskSimulation;
@@ -20,6 +18,7 @@ namespace TaskSimulationTests.Simulator
 
         private PrivateObjectHelper _dist = new PrivateObjectHelper();
 
+        // TODO verify results
         [TestMethod()]
         public void SimulateKnownParamsTest()
         {
@@ -42,18 +41,16 @@ namespace TaskSimulationTests.Simulator
                 ResponseStd = new ContinuousUniform(0.01,0.01)
             });
 
-            _dist.SetTaskArrivalRate(new ContinuousUniform(1, 1));
-
             SimDistribution.I.GradeSystem = new OriginalGradeCalc();
 
             var executionSummary = SingleExecution();
 
-            Assert.AreEqual((double)7 / 8, Math.Round(executionSummary.TotalWorkersUtilization,3));
-            Assert.AreEqual(2, executionSummary.FinishedTasksForSingleExecution);
-            Assert.AreEqual(Math.Round((double)2 / 9,3), Math.Round(executionSummary.TotalTasksWait,3));
+            Assert.AreEqual(100, executionSummary.TotalWorkersUtilization *100); //%
+            Assert.AreEqual(100, executionSummary.FinishedTasksForSingleExecution * 100);  //%
+            Assert.AreEqual(Math.Round(4.98 / 8.98, 3), Math.Round(executionSummary.TotalTasksWait, 3));
             Assert.AreEqual(5, executionSummary.TotalTasksForSingleExecution);
         }
-        
+
         [TestMethod()]
         public void SimulateWorkerLeaveTest()
         {
@@ -165,9 +162,6 @@ namespace TaskSimulationTests.Simulator
             };
 
             return executionStatistics;
-        }
-
-
-        
+        } 
     }
 }

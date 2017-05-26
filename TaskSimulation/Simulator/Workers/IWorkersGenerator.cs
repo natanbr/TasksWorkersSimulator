@@ -3,7 +3,5 @@
     public interface IWorkersGenerator
     {
         Worker GetNextWorker();
-
-        //void AddWorkers(int numberOfWorkers);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using MathNet.Numerics.Distributions;
 using TaskSimulation.ChooseAlgorithms;
+using TaskSimulation.Simulator.Events;
 using TaskSimulation.Simulator.Workers;
 using TaskSimulation.Utiles;
 
@@ -23,7 +24,7 @@ namespace TaskSimulation.Distribution
             GlobalRandom = new Random(GlobalSeed);
         }
 
-        public void LoadData(int execution, InputXmlShema shema)
+        public bool LoadData(int execution, InputXmlShema shema)
         {
             var execData = shema.Executions[execution];
             TaskArrivalRate = ReflectIContinuousDistribution.GetDistribution(execData.TaskArrivalRate.Type, execData.TaskArrivalRate.Params, GlobalRandom);
@@ -41,19 +42,16 @@ namespace TaskSimulation.Distribution
                 ResponseStd = ReflectIContinuousDistribution.GetDistribution (wqd.ResponseTimeStd.Type, wqd.ResponseTimeStd.Params, GlobalRandom),
             };
 
-            var legal = WorkersQualityDistribution.Validate();
+            return WorkersQualityDistribution.Validate();
         }
 
         public IContinuousDistribution TaskArrivalRate { get; private set; }
         public IContinuousDistribution WorkerArrivalRate { get; private set; }
         public IContinuousDistribution WorkerLeaveRate { get; private set; }
-        //public IContinuousDistribution FeedbackDistribution { get; private set; }
-        //public IContinuousDistribution QualityGrade { get; private set; }
-        //public IContinuousDistribution ResponseTime { get; private set; }
 
         public IGradeCalcAlgo GradeSystem { get; set; }
 
         public WorkersQualityDistribution WorkersQualityDistribution { get; private set; }
-       
+
     }
 }

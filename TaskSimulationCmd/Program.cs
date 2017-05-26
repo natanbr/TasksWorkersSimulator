@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using MathNet.Numerics.Distributions;
 using TaskSimulation;
 using TaskSimulation.ChooseAlgorithms;
 using TaskSimulation.Distribution;
@@ -30,47 +29,46 @@ namespace TaskSimulationCmd
         // - When Worker didn't complete the task and left -> End time = worker left
 
         static ExecutionSummary[] _summaries;
+        static Stopwatch _stopwatch = new Stopwatch();
 
-
-        static void Main()
+        static void Main(string[] args)
         {
+            var execData = LoadInputFile(args);
+            if (execData == null) return;
+
             SimDistribution.I.Initialize(Guid.NewGuid().GetHashCode());
-
-            var execData = XmlUtils.Load<InputXmlShema>(@"C:\Users\nbraslav\P4_Local\TaskSimulation\TaskSimulation\bin\Debug\SimExe.xml");
-
-            if (execData?.Executions == null || execData?.Executions?.Length <= 0)
-            {
-                Log.Err("File load failed, exitting execution.");
-                XmlUtils.Save("", new InputXmlShema());
-                return;
-            }
-
-            var executions = execData.Executions.Length;
-
-            _summaries = new ExecutionSummary[executions];
-
             Log.I($"Global seed is {SimDistribution.I.GlobalSeed}");
             Log.I($"Global Random is {SimDistribution.I.GlobalRandom}");
 
+            var executions = execData.Executions.Length;
+            _summaries = new ExecutionSummary[executions];
+            
+            // TODO move grade system to file
             SimDistribution.I.GradeSystem = new OriginalGradeCalc();
 
-            for (int i = 0; i < executions; i++)
+            for (var i = 0; i < executions; i++)
             {
                 // Load the execution data for each iteration
-                SimDistribution.I.LoadData(i, execData);
+                var loadStatus = SimDistribution.I.LoadData(i, execData);
+
+                if (!loadStatus)
+                {
+                    Log.Err($"Load data for execution {i} failed.");
+                    return;
+                }
+
                 var initialNumOfWorkers = execData.Executions[i].InitialNumOfWorkers;
-                var maxSimulationTime = execData.Executions[i].MaxSimulationTime;
+                var maxSimulationTime   = execData.Executions[i].MaxSimulationTime;
 
                 Log.I($"------------ Simulation Execution {i} ------------", ConsoleColor.DarkCyan);
 
-                var sw = new Stopwatch();
-
-                sw.Start();
+                _stopwatch.Restart();
                 _summaries[i] = SingleExecution(maxSimulationTime, initialNumOfWorkers);
+                _stopwatch.Stop();
 
-                sw.Stop();
-                var elapsed = sw.Elapsed;
-                Log.I($"Run time {elapsed}", ConsoleColor.Magenta);
+                Log.I($"Execution -{i}- Runtime: {_stopwatch.Elapsed, -5:##.##}", ConsoleColor.Blue);
+                Log.I();
+
             }
 
             Log.I();
@@ -103,6 +101,25 @@ namespace TaskSimulationCmd
 
             return executionStatistics;
         }
+
+        private static InputXmlShema LoadInputFile(string[] args)
+        {
+            var inputFile = @"SimExe.xml";
+            if (args?.Length > 0)
+                inputFile = args[0];
+            var execData = XmlUtils.Load<InputXmlShema>(inputFile);
+
+            if (execData?.Executions == null || execData?.Executions?.Length <= 0)
+            {
+                Log.Err("File load failed, exitting execution.");
+                XmlUtils.Save("", new InputXmlShema());
+                return null;
+            }
+
+            return execData;
+        }
+
+        
     }
 
 }

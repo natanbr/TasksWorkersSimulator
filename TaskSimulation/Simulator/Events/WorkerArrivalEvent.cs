@@ -9,7 +9,6 @@ namespace TaskSimulation.Simulator.Events
 
         public WorkerArrivalEvent(SimulationEventMan eventMan, double arriveAt) : base(arriveAt)
         {
-
             EventMan = eventMan;
         }
 

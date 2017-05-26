@@ -15,26 +15,12 @@ namespace TaskSimulation.Simulator.Workers
         private readonly IWorkersGenerator _workersGenerator;
         private const int NUM_OF_WORKERS_ON_TASK = 1;   // todo move to settings file
 
-        public WorkersJournal(long initialNumOfWorkers)
+        public List<Worker> ActiveWorkers => _activeWorkers;
+
+        public WorkersJournal()
         {
             _workersGenerator = new WorkersGenerator(SimDistribution.I.WorkersQualityDistribution);
             _activeWorkers = new List<Worker>();
-
-            for (var i = 0; i < initialNumOfWorkers; i++)
-                AddNewWorker();
-        }
-
-        private void AddNewWorker()
-        {
-            //var newWorker = new Worker();
-            var newWorker = _workersGenerator.GetNextWorker();
-            if (newWorker == null)
-            {
-                Log.Err($"Error!! No more available workers!");
-                return;
-            }
-
-            _activeWorkers.Add(newWorker);
         }
 
         public void AssignTask(Task task)
@@ -51,11 +37,6 @@ namespace TaskSimulation.Simulator.Workers
                 Log.Event($"Adding {task} to {worker}");
                 worker?.AddTask(task);
             });
-        }
-
-        public List<Worker> ActiveWorkers
-        {
-            get { return _activeWorkers; }
         }
 
         public void Update(WorkerArrivalEvent @event)
@@ -82,7 +63,7 @@ namespace TaskSimulation.Simulator.Workers
         {
             // TODO for each worker task in the list reassign them
             var worker = @event.Worker;
-
+             
             worker.Statistics.EndAt = SimulateServer.SimulationClock;
 
             _activeWorkers.Remove(worker);

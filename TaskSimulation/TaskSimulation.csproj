@@ -58,6 +58,9 @@
     <Compile Include="Distribution\SimDistribution.cs" />
     <Compile Include="Distribution\ExtensionMethods.cs" />
     <Compile Include="ChooseAlgorithms\IChooseWorkerAlgo.cs" />
+    <Compile Include="Simulator\Events\IPeriodicEvent.cs" />
+    <Compile Include="Simulator\Events\TaskArrivalPeriodicEvent.cs" />
+    <Compile Include="Simulator\Events\WorkerArrivalPeriodicEvent.cs" />
     <Compile Include="Utiles\ExtensionMethods.cs" />
     <Compile Include="Utiles\InputXmlShema.cs" />
     <Compile Include="Utiles\Log.cs" />
