@@ -66,7 +66,7 @@ namespace TaskSimulationCmd
                 _summaries[i] = SingleExecution(maxSimulationTime, initialNumOfWorkers);
                 _stopwatch.Stop();
 
-                Log.I($"Execution -{i}- Runtime: {_stopwatch.Elapsed, -5:##.##}", ConsoleColor.Blue);
+                Log.I($"Execution -{i}- Runtime: {_stopwatch.Elapsed}", ConsoleColor.Blue);
                 Log.I();
 
             }
