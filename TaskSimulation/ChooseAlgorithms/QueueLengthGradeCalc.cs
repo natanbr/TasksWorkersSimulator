@@ -6,6 +6,8 @@ namespace TaskSimulation.ChooseAlgorithms
 {
     public class QueueLengthGradeCalc : IGradeCalcAlgo
     {
+        const int TASKS_IN_PROSS = 1;
+
         public Grade InitialGrade()
         {
             var grade = new Grade()
@@ -21,7 +23,9 @@ namespace TaskSimulation.ChooseAlgorithms
 
         public Grade UpdateOnTaskAdd(Grade grade)
         {
-            grade.NumberOfTasksGrade++; 
+            grade.NumberOfTasksGrade++;
+
+            UpdateQueueGrade(ref grade);
 
             return grade;
         }
@@ -30,22 +34,33 @@ namespace TaskSimulation.ChooseAlgorithms
         {
             var grade = worker.Grade;
 
-            var currentTime = Simulator.SimulateServer.SimulationClock;
+            UpdateQueueGrade(ref grade);
 
             grade.NumberOfTasksGrade--; 
 
-            var sumQuereLength = (currentTime - grade.Meta.LastModifiedAt) * grade.NumberOfTasksGrade;
+            return grade;
+        }
 
-            Log.D($"Grade Updated: sumQuereLength = (currentTime - lastUpdateTime) * QueueLength = " +
-                $"(${currentTime} - ${grade.Meta.LastModifiedAt}) * ${grade.NumberOfTasksGrade} = ${sumQuereLength}");
+        /// <summary>
+        /// Queue grade re-calculations
+        /// QueueTime = (Delta time * Queue length) 
+        /// QueueAvarage = TODO Need to normalize the QueueTime
+        /// </summary>
+        /// <param name="grade"></param>
+        private void UpdateQueueGrade(ref Grade grade)
+        {
+            var currentTime = Simulator.SimulateServer.SimulationClock;
 
-            grade.ResponseGrade += sumQuereLength; // TODO normal
+            var sumQueueLength = (currentTime - grade.Meta.LastModifiedAt) * (grade.NumberOfTasksGrade - TASKS_IN_PROSS);
+
+            Log.D("Grade Updated: sumQuereLength = (currentTime - lastUpdateTime) * QueueLength = " +
+                $"({currentTime} - {grade.Meta.LastModifiedAt}) * {grade.NumberOfTasksGrade - TASKS_IN_PROSS} = {sumQueueLength}");
+
+            grade.ResponseGrade += sumQueueLength; // TODO normalize
 
             grade.TotalGrade = grade.ResponseGrade; // TODO add FeedbackGrade, QualityGrade
 
             grade.Meta.LastModifiedAt = Simulator.SimulateServer.SimulationClock;
-
-            return grade;
         }
     }
 }
