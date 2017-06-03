@@ -19,17 +19,7 @@ namespace TaskSimulation.Simulator.Workers
             _tasks = new TasksQueue();
             Statistics = new WorkerStatistics();
             Distribution = new WorkerDistribution(qualies);
-
-            // The F,Q,R... will be used for next calc, Grade will be used as initial grade 
-            Grade = new Grade()
-            {
-                FeedbackGrade = SimDistribution.I.GradeSystem.InitialGrade(),
-                QualityGrade = SimDistribution.I.GradeSystem.InitialGrade(),
-                ResponseGrade = SimDistribution.I.GradeSystem.InitialGrade(),
-                NumberOfTasksGrade = SimDistribution.I.GradeSystem.GetMaxNumberOfTasks(),
-            };
-
-            Grade.TotalGrade = SimDistribution.I.GradeSystem.GetFinalGrade(Grade);
+            Grade = SimDistribution.I.GradeSystem.InitialGrade();
         }
 
         public void AddTask(Task task)
@@ -54,9 +44,8 @@ namespace TaskSimulation.Simulator.Workers
             IsWorking = false;
 
             Statistics.UpdateWorkedTime(task);
-           
-            Grade = SimDistribution.I.GradeSystem.UpdateOnTaskRemoved(Grade, time - task.StartTime);
-            Grade = SimDistribution.I.GradeSystem.GenerateRandomGrade(this);
+
+            Grade = SimDistribution.I.GradeSystem.UpdateOnTaskRemoved(this, task);
 
             // Start work on the next task
             ContinueToNextTask();

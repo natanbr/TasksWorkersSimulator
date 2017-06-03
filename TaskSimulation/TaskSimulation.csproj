@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="ChooseAlgorithms\ChooseHighestGrade.cs" />
     <Compile Include="ChooseAlgorithms\IGradeCalcAlgo.cs" />
+    <Compile Include="ChooseAlgorithms\QueueLengthGradeCalc.cs" />
     <Compile Include="ChooseAlgorithms\OriginalGradeCalc.cs" />
     <Compile Include="Distribution\ReflectIContinuousDistribution.cs" />
     <Compile Include="Distribution\SimDistribution.cs" />
