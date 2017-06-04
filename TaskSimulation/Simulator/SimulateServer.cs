@@ -23,6 +23,8 @@ namespace TaskSimulation.Simulator
             SimulatorMaxRunTime = maxSimulationTime;
             
             Utilization = new Utilization();
+            _tasksJournal = new TasksJournal();
+            _workersJournal = new WorkersJournal();
         }
 
         public void Initialize(long initialNumOfWorkers)
@@ -30,11 +32,8 @@ namespace TaskSimulation.Simulator
             Log.D("* * * * * * * Init * * * * * * *");
             Task.TASK_ID = 0;
 
-            _simulationEvents.InitializeGenesisEvents();
+            _simulationEvents.InitializeGenesisEvents(1, initialNumOfWorkers);
 
-            _tasksJournal = new TasksJournal();
-
-            _workersJournal = new WorkersJournal();
             //Utilization.AddWorkers(_workersJournal.ActiveWorkers);
 
             Log.D("* * * * * * * Init * * * * * * *");
@@ -52,7 +51,7 @@ namespace TaskSimulation.Simulator
 
                 SimulationClock = nextEvent.ArriveTime;
                 Log.I();
-                Log.Event( $"{nextEvent} at time {SimulationClock,-5:##.##}");
+                Log.Event( $"{nextEvent} at time {SimulationClock,-5:#0.##}");
 
                 if (nextEvent is TaskArrivalEvent || nextEvent is TaskFinishedEvent)
                 {

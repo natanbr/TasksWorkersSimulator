@@ -42,9 +42,10 @@ namespace TaskSimulationCmd
 
             var executions = execData.Executions.Length;
             _summaries = new ExecutionSummary[executions];
-            
+
             // TODO move grade system to file
-            SimDistribution.I.GradeSystem = new OriginalGradeCalc();
+            //SimDistribution.I.GradeSystem = new OriginalGradeCalc();
+            SimDistribution.I.GradeSystem = new QueueLengthGradeCalc();
 
             for (var i = 0; i < executions; i++)
             {

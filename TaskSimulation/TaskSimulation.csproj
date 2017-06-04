@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChooseAlgorithms\ChooseLowestGrade.cs" />
     <Compile Include="ChooseAlgorithms\ChooseHighestGrade.cs" />
     <Compile Include="ChooseAlgorithms\IGradeCalcAlgo.cs" />
     <Compile Include="ChooseAlgorithms\QueueLengthGradeCalc.cs" />

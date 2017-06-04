@@ -14,6 +14,7 @@ namespace TaskSimulation.Simulator.Workers
         private readonly List<Worker> _activeWorkers;
         private readonly IWorkersGenerator _workersGenerator;
         private const int NUM_OF_WORKERS_ON_TASK = 1;   // todo move to settings file
+        private readonly IChooseWorkerAlgo _chooseAlgo;
 
         public List<Worker> ActiveWorkers => _activeWorkers;
 
@@ -21,6 +22,8 @@ namespace TaskSimulation.Simulator.Workers
         {
             _workersGenerator = new WorkersGenerator(SimDistribution.I.WorkersQualityDistribution);
             _activeWorkers = new List<Worker>();
+            //_chooseAlgo = new ChooseHighestGrade();
+            _chooseAlgo = new ChooseLowestGrade();
         }
 
         public void AssignTask(Task task)
@@ -28,8 +31,7 @@ namespace TaskSimulation.Simulator.Workers
             if (_activeWorkers.Count <= 0)
                 return;
 
-            var chooseAlgo = new ChooseHighestGrade(); 
-            var workers = chooseAlgo.ChooseWorkers(_activeWorkers, NUM_OF_WORKERS_ON_TASK);
+            var workers = _chooseAlgo.ChooseWorkers(_activeWorkers, NUM_OF_WORKERS_ON_TASK);
 
             // Assign the task to each worker
             workers?.ForEach(worker =>

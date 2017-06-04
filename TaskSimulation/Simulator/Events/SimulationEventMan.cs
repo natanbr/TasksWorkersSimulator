@@ -17,7 +17,7 @@ namespace TaskSimulation.Simulator.Events
             _events = new PriorityQueue<AEvent>();
         }
 
-        public void InitializeGenesisEvents(int tasks = 1, int workers = 1)
+        public void InitializeGenesisEvents(int tasks = 1, long workers = 1)
         {
             // Add the base periodic events
             AddEvent(new TaskArrivalPeriodicEvent(this, 0));

@@ -28,8 +28,8 @@ namespace TaskSimulation.Distribution
         {
             var execData = shema.Executions[execution];
             TaskArrivalRate = ReflectIContinuousDistribution.GetDistribution(execData.TaskArrivalRate.Type, execData.TaskArrivalRate.Params, GlobalRandom);
-            WorkerArrivalRate = ReflectIContinuousDistribution.GetDistribution(execData.WorkerArrivalRate.Type, execData.TaskArrivalRate.Params, GlobalRandom);
-            WorkerLeaveRate = ReflectIContinuousDistribution.GetDistribution(execData.WorkerLeaveRate.Type, execData.TaskArrivalRate.Params, GlobalRandom);
+            WorkerArrivalRate = ReflectIContinuousDistribution.GetDistribution(execData.WorkerArrivalRate.Type, execData.WorkerArrivalRate.Params, GlobalRandom);
+            WorkerLeaveRate = ReflectIContinuousDistribution.GetDistribution(execData.WorkerLeaveRate.Type, execData.WorkerLeaveRate.Params, GlobalRandom);
 
             var wqd = execData.WorkersQualityDistribution;
             WorkersQualityDistribution = new WorkersQualityDistribution()
