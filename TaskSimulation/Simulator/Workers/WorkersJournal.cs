@@ -22,8 +22,7 @@ namespace TaskSimulation.Simulator.Workers
         {
             _workersGenerator = new WorkersGenerator(SimDistribution.I.WorkersQualityDistribution);
             _activeWorkers = new List<Worker>();
-            //_chooseAlgo = new ChooseHighestGrade();
-            _chooseAlgo = new ChooseLowestGrade();
+            _chooseAlgo = SimDistribution.I.GradeSystemChooseMethod; 
         }
 
         public void AssignTask(Task task)

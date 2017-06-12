@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TaskSimulation.Simulator;
 using TaskSimulation.Simulator.Events;
@@ -15,10 +14,14 @@ namespace TaskSimulation.Results
         private readonly List<Task> _tasks;
         private readonly List<Worker> _workers;
 
+        public TasksWorkStatistics TasksWorkStatistics { get; set; }
+
         public Utilization()
         {
             _tasks = new List<Task>();
             _workers = new List<Worker>();
+
+            TasksWorkStatistics = new TasksWorkStatistics(_tasks);
         }
 
         public void AddWorkers(List<Worker> workers)
@@ -34,17 +37,38 @@ namespace TaskSimulation.Results
         public void Update(TaskArrivalEvent @event)
         {
             _tasks.Add(@event.Task);
+            UpdateSubscribers(@event);
         }
 
-        public void Update(TaskFinishedEvent @event) { }
+        public void Update(TaskFinishedEvent @event)
+        {
+            UpdateSubscribers(@event);
+        }
 
         public void Update(WorkerArrivalEvent @event)
         {
             _workers.Add(@event.Worker);
+            UpdateSubscribers(@event);
         }
 
-        public void Update(WorkerLeaveEvent @event) { }
+        public void Update(WorkerLeaveEvent @event)
+        {
+            UpdateSubscribers(@event);
+        }
 
+        private void UpdateSubscribers<T>(T @event)
+        {
+            (@event as AEvent)?.Accept(TasksWorkStatistics);
+        }
+
+
+
+
+
+
+
+
+        /************ OLD CODE ***************/ // TODO move this to classes
         private double GetWorkersWorkedTime()
         {
             var sumWorkersWorkedTime = _workers.Sum(w =>
@@ -89,7 +113,7 @@ namespace TaskSimulation.Results
         }
 
         /// <summary>
-        /// (Total time the workers worked/Number of workers)/Simulation Run time = Utiliztion
+        /// (Total time the workers worked/Number of workers)/Simulation Run time = Utilization
         /// If all the workers were working all the time, the system utilization has been 100%
         /// </summary>
         /// <returns></returns>
@@ -103,34 +127,6 @@ namespace TaskSimulation.Results
             Log.I($"System utilization is: " +
                   $"({sumWorkersWorkedTime}/{_workers.Count})/{SimulateServer.SimulationClock} = {systemUtilization * 100:N2}%");
             return systemUtilization;
-        }
-
-        public double TaskWereInWaitList()
-        {
-            var sumTasksWaitTime = _tasks.Sum(t =>
-            {
-                if (t.StartTime != -1)
-                    return t.StartTime - t.CreatedTime;
-
-                // Task was not finished
-                return SimulateServer.SimulationClock - t.CreatedTime;
-            });
-
-            var sumTasksExistsTime = _tasks.Sum(t =>
-            {
-                if (t.EndTime != -1)
-                    return t.EndTime - t.CreatedTime;
-                
-                // Task was not finished
-                return SimulateServer.SimulationClock - t.CreatedTime;
-            });
-
-            var total = sumTasksWaitTime / sumTasksExistsTime;
-
-            Log.I($"Task were waiting: (tasks sum wait time) / (sum of time tasks exists)");
-            Log.I($"Task were waiting: " +
-                  $"{sumTasksWaitTime}/{sumTasksExistsTime} = {total * 100:N2}%");
-            return total;
         }
     }
 }

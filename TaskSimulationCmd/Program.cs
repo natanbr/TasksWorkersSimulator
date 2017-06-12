@@ -46,7 +46,7 @@ namespace TaskSimulationCmd
             // TODO move grade system to file
             //SimDistribution.I.GradeSystem = new OriginalGradeCalc();
             SimDistribution.I.GradeSystem = new QueueLengthGradeCalc();
-
+            SimDistribution.I.GradeSystemChooseMethod = SimDistribution.I.GradeSystem.ChooseMethod();
             for (var i = 0; i < executions; i++)
             {
                 // Load the execution data for each iteration
@@ -97,8 +97,16 @@ namespace TaskSimulationCmd
                 TotalSystemUtilization = simulator.Utilization.GetSystemUtilization(),
                 FinishedTasksForSingleExecution = simulator.Utilization.GetNumberOfFinishedTasks(),
                 TotalTasksForSingleExecution = simulator.Utilization.GetNumberOfTotalTasks(),
-                TotalTasksWait = simulator.Utilization.TaskWereInWaitList()
+                TotalTasksWait = simulator.Utilization.TasksWorkStatistics.TaskWereInWaitList()
             };
+
+            simulator.Utilization.TasksWorkStatistics.GetAvarageProcessingTime();
+            simulator.Utilization.TasksWorkStatistics.GetAvarageWaitingTime();
+            simulator.Utilization.TasksWorkStatistics.GetAvarageExecutionTime();
+            simulator.Utilization.TasksWorkStatistics.GetParsentOfWaitTime();
+            simulator.Utilization.TasksWorkStatistics.GetParsentOfworkTime();
+            simulator.Utilization.TasksWorkStatistics.GetFinishedTasks();
+            simulator.Utilization.TasksWorkStatistics.GetCreatedTasks();
 
             return executionStatistics;
         }

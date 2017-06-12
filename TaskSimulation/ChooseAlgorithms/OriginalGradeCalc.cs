@@ -46,6 +46,11 @@ namespace TaskSimulation.ChooseAlgorithms
             return grade;
         }
 
+        public IChooseWorkerAlgo ChooseMethod()
+        {
+            return new ChooseHighestGrade();
+        }
+
         private Grade CalculateNewGrade(Worker worker, Task task)
         {
             var grade = worker.Grade;

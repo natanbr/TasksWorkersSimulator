@@ -105,10 +105,10 @@
             public ExecutionWorkersQualityDistributionQualityStd QualityStd { get; set; }
 
             /// <remarks/>
-            public ExecutionWorkersQualityDistributionResponseTimeMean ResponseTimeMean { get; set; }
+            public ExecutionWorkersQualityDistributionResponseTimeMean ProcessingTimeMean { get; set; }
 
             /// <remarks/>
-            public ExecutionWorkersQualityDistributionResponseTimeStd ResponseTimeStd { get; set; }
+            public ExecutionWorkersQualityDistributionResponseTimeStd ProcessingTimeStd { get; set; }
         }
 
         /// <remarks/>
@@ -237,12 +237,12 @@
                             Type = "ContinuousUniform",
                             Params = new double[] {1, 2}
                         },
-                        ResponseTimeMean = new ExecutionWorkersQualityDistributionResponseTimeMean()
+                        ProcessingTimeMean = new ExecutionWorkersQualityDistributionResponseTimeMean()
                         {
                             Type = "ContinuousUniform",
                             Params = new double[] {1, 2}
                         },
-                        ResponseTimeStd = new ExecutionWorkersQualityDistributionResponseTimeStd()
+                        ProcessingTimeStd = new ExecutionWorkersQualityDistributionResponseTimeStd()
                         {
                             Type = "ContinuousUniform",
                             Params = new double[] {1, 2}

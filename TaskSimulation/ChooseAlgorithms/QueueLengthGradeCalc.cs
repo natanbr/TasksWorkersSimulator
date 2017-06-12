@@ -1,6 +1,7 @@
 ﻿using TaskSimulation.Distribution;
 using TaskSimulation.Simulator.Tasks;
 using TaskSimulation.Simulator.Workers;
+using TaskSimulation.Utiles;
 
 namespace TaskSimulation.ChooseAlgorithms
 {
@@ -10,6 +11,7 @@ namespace TaskSimulation.ChooseAlgorithms
 
         public Grade InitialGrade()
         {
+
             var grade = new Grade()
             {
                 FeedbackGrade = 0,
@@ -23,7 +25,7 @@ namespace TaskSimulation.ChooseAlgorithms
 
         public Grade UpdateOnTaskAdd(Grade grade)
         {
-            grade.NumberOfTasksGrade++;
+            grade.NumberOfTasksGrade++; // TODO add to metadata as NumberOfTasks
 
             UpdateQueueGrade(ref grade);
 
@@ -41,6 +43,11 @@ namespace TaskSimulation.ChooseAlgorithms
             return grade;
         }
 
+        public IChooseWorkerAlgo ChooseMethod()
+        {
+            return new ChooseLowestGrade();
+        }
+
         /// <summary>
         /// Queue grade re-calculations
         /// QueueTime = (Delta time * Queue length) 
@@ -49,16 +56,24 @@ namespace TaskSimulation.ChooseAlgorithms
         /// <param name="grade"></param>
         private void UpdateQueueGrade(ref Grade grade)
         {
+            // TODO ask, is this Queue length or Total execution time
             var currentTime = Simulator.SimulateServer.SimulationClock;
 
-            var sumQueueLength = (currentTime - grade.Meta.LastModifiedAt) * (grade.NumberOfTasksGrade - TASKS_IN_PROSS);
+            var workingTime = grade.Meta.WorkingTime;
 
-            Log.D("Grade Updated: sumQuereLength = (currentTime - lastUpdateTime) * QueueLength = " +
-                $"({currentTime} - {grade.Meta.LastModifiedAt}) * {grade.NumberOfTasksGrade - TASKS_IN_PROSS} = {sumQueueLength}");
+            var newDeltaTime = currentTime - grade.Meta.LastModifiedAt;
 
-            grade.ResponseGrade += sumQueueLength; // TODO normalize
+            if (newDeltaTime <= 0)
+                return;
 
-            grade.TotalGrade = grade.ResponseGrade; // TODO add FeedbackGrade, QualityGrade
+            grade.Meta.WorkingTime += newDeltaTime;
+
+            var currentQeueuValue = (grade.NumberOfTasksGrade - TASKS_IN_PROSS);
+
+            // Avarage
+            grade.ResponseGrade = LMath.Average(grade.ResponseGrade, workingTime, currentQeueuValue, newDeltaTime);
+
+            grade.TotalGrade = grade.ResponseGrade; // TODO add FeedbackGrade
 
             grade.Meta.LastModifiedAt = Simulator.SimulateServer.SimulationClock;
         }

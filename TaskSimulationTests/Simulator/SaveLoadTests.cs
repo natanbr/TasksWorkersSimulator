@@ -52,10 +52,10 @@ namespace TaskSimulationTests.Simulator
             wQuality.QualityMean.Params = new double[] { 10, 10 };
             wQuality.QualityStd.Type = "ContinuousUniform";
             wQuality.QualityStd.Params = new double[] { 0.001, 0.001 };
-            wQuality.ResponseTimeMean.Type = "Normal";
-            wQuality.ResponseTimeMean.Params = new double[] { 300, 50};
-            wQuality.ResponseTimeStd.Type = "Normal";
-            wQuality.ResponseTimeStd.Params = new double[] { 300, 0.2};
+            wQuality.ProcessingTimeMean.Type = "Normal";
+            wQuality.ProcessingTimeMean.Params = new double[] { 300, 50};
+            wQuality.ProcessingTimeStd.Type = "Normal";
+            wQuality.ProcessingTimeStd.Params = new double[] { 300, 0.2};
 
             XmlUtils.Save(path, InputXmlShema.Default);
             var xml = XmlUtils.Load<InputXmlShema>(path);
@@ -80,7 +80,7 @@ namespace TaskSimulationTests.Simulator
                 "Feedback is generated with normal distribution Normal(Mean, Std)");
             XmlUtils.AddXmlEntryDocumentation(path, "QualityMean",
                 "Quality is generated with normal distribution Normal(Mean, Std)");
-            XmlUtils.AddXmlEntryDocumentation(path, "ResponseTimeMean",
+            XmlUtils.AddXmlEntryDocumentation(path, "ProcessingTimeMean",
                 "ResponseTime is generated with normal distribution Normal(Mean, Std)");
         }
     }

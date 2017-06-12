@@ -9,7 +9,7 @@
         public double ResponseGrade;
         public double FeedbackGrade;
         public double QualityGrade;
-        public int NumberOfTasksGrade;
+        public int NumberOfTasksGrade { get; set; }
 
         public MetaData Meta = new MetaData();
 
@@ -21,6 +21,7 @@
         public class MetaData
         {
             public double LastModifiedAt;
+            public double WorkingTime;
         }
     }
 }

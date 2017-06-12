@@ -156,7 +156,7 @@ namespace TaskSimulationTests.Simulator
 
                 TotalWorkersUtilization = simulator.Utilization.GetTotalWorkersUtilization(),
                 TotalSystemUtilization = simulator.Utilization.GetSystemUtilization(),
-                TotalTasksWait = simulator.Utilization.TaskWereInWaitList(),
+                TotalTasksWait = simulator.Utilization.TasksWorkStatistics.TaskWereInWaitList(),
                 FinishedTasksForSingleExecution = simulator.Utilization.GetNumberOfFinishedTasks(),
                 TotalTasksForSingleExecution = simulator.Utilization.GetNumberOfTotalTasks(),
             };
