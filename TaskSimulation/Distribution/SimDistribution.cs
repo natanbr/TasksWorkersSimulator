@@ -38,8 +38,8 @@ namespace TaskSimulation.Distribution
                 FeedbackStd = ReflectIContinuousDistribution.GetDistribution (wqd.FeedbackStd.Type,     wqd.FeedbackStd.Params,     GlobalRandom),
                 QualityMean = ReflectIContinuousDistribution.GetDistribution (wqd.QualityMean.Type,     wqd.QualityMean.Params,     GlobalRandom),
                 QualityStd = ReflectIContinuousDistribution.GetDistribution  (wqd.QualityStd.Type,      wqd.QualityStd.Params,      GlobalRandom),
-                ResponseMean = ReflectIContinuousDistribution.GetDistribution(wqd.ProcessingTimeMean.Type,wqd.ProcessingTimeMean.Params,GlobalRandom),
-                ResponseStd = ReflectIContinuousDistribution.GetDistribution (wqd.ProcessingTimeStd.Type, wqd.ProcessingTimeStd.Params, GlobalRandom),
+                ProcessingMean = ReflectIContinuousDistribution.GetDistribution(wqd.ProcessingTimeMean.Type,wqd.ProcessingTimeMean.Params,GlobalRandom),
+                ProcessingStd = ReflectIContinuousDistribution.GetDistribution (wqd.ProcessingTimeStd.Type, wqd.ProcessingTimeStd.Params, GlobalRandom),
             };
 
             return WorkersQualityDistribution.Validate();

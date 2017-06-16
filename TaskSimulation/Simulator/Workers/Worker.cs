@@ -9,7 +9,7 @@ namespace TaskSimulation.Simulator.Workers
         private long ID;
         private readonly TasksQueue _tasks;
         public Grade Grade { get; set; }
-        public WorkerStatistics Statistics { get; set; }
+        public WorkerExecData Statistics { get; set; }
         public WorkerDistribution Distribution { get; set; }
         public bool IsWorking { get; private set; } = false;
 
@@ -17,7 +17,7 @@ namespace TaskSimulation.Simulator.Workers
         {
             ID = id;
             _tasks = new TasksQueue();
-            Statistics = new WorkerStatistics();
+            Statistics = new WorkerExecData();
             Distribution = new WorkerDistribution(qualies);
             Grade = SimDistribution.I.GradeSystem.InitialGrade();
         }

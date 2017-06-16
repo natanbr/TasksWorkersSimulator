@@ -71,7 +71,7 @@ namespace TaskSimulation.ChooseAlgorithms
             var currentQeueuValue = (grade.NumberOfTasksGrade - TASKS_IN_PROSS);
 
             // Avarage
-            grade.ResponseGrade = LMath.Average(grade.ResponseGrade, workingTime, currentQeueuValue, newDeltaTime);
+            grade.ResponseGrade = LMath.AverageIncrementalSize(grade.ResponseGrade, workingTime, currentQeueuValue, newDeltaTime);
 
             grade.TotalGrade = grade.ResponseGrade; // TODO add FeedbackGrade
 

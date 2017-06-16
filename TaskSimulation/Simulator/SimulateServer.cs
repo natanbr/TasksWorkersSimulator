@@ -73,7 +73,7 @@ namespace TaskSimulation.Simulator
                 nextEvent = _simulationEvents.GetNextEvent();
             }
 
-            PrintSimulationState();
+            //PrintSimulationState();
         }
 
         public void PrintSimulationState()

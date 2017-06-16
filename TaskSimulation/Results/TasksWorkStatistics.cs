@@ -26,13 +26,13 @@ namespace TaskSimulation.Results
 
         public TasksWorkStatistics(List<Task> tasks)
         {
-            _averageProcessingTime = new List<Tuple<double, double>>();
-            _avarageWatingTime = new List<Tuple<double, double>>();
-            _averageExecutionTime = new List<Tuple<double, double>>();
-            _persentWaitingTime = new List<Tuple<double, double>>();
-            _persentWorkingTime = new List<Tuple<double, double>>();
-            _finishedTasks = new List<Tuple<double, int>>();
-            _totalTasks = new List<Tuple<double, int>>();
+            _averageProcessingTime = new List<Tuple<double, double>> {new Tuple<double, double>(0, 0)};
+            _avarageWatingTime = new List<Tuple<double, double>> { new Tuple<double, double>(0, 0) };
+            _averageExecutionTime = new List<Tuple<double, double>> { new Tuple<double, double>(0, 0) };
+            _persentWaitingTime = new List<Tuple<double, double>> { new Tuple<double, double>(0, 0) };
+            _persentWorkingTime = new List<Tuple<double, double>> { new Tuple<double, double>(0, 0) };
+            _finishedTasks = new List<Tuple<double, int>> { new Tuple<double, int>(0, 0) };
+            _totalTasks = new List<Tuple<double, int>> { new Tuple<double, int>(0, 0) };
 
             _tasks = tasks;
         }
@@ -55,13 +55,13 @@ namespace TaskSimulation.Results
             AddAverageValue(_persentWaitingTime, additionalTime, newWaitingTime);
             AddAverageValue(_persentWorkingTime, additionalTime, newProcessTime);
 
-            _finishedTasks.Add(new Tuple<double, int>(task.EndTime, _finishedTasks.Count + 1));
+            _finishedTasks.Add(new Tuple<double, int>(task.EndTime, _finishedTasks.Count));
         }
 
         public void Update(TaskArrivalEvent @event)
         {
             var task = @event.Task;
-            _totalTasks.Add(new Tuple<double, int>(task.CreatedTime, _totalTasks.Count + 1));
+            _totalTasks.Add(new Tuple<double, int>(task.CreatedTime, _totalTasks.Count));
         }
 
         public void Update(WorkerArrivalEvent @event)
@@ -76,43 +76,43 @@ namespace TaskSimulation.Results
 
         public double GetAvarageProcessingTime()
         {
-            Log.D("Get Avarage Processing Time: (tasks, average) \n" + Print(_averageProcessingTime));
+            Log.D("Get Avarage Processing Time: \n" + Print(_averageProcessingTime, "Task:","Average:"));
             return _averageProcessingTime.Last().Item2;
         }
 
         public double GetAvarageWaitingTime()
         {
-            Log.D("Get Avarage Waiting Time: (tasks, average) \n" + Print(_avarageWatingTime));
+            Log.D("Get Avarage Waiting Time: \n" + Print(_avarageWatingTime, "Task:", "Average:"));
             return _avarageWatingTime.Last().Item2;
         }
 
         public double GetAvarageExecutionTime()
         {
-            Log.D("Get Avarage Execution Time: (tasks, average) \n" + Print(_averageExecutionTime));
+            Log.D("Get Avarage Execution Time (Wait + Process): \n" + Print(_averageExecutionTime, "Task:", "Average:"));
             return _averageExecutionTime.Last().Item2;
         }
 
         public double GetParsentOfWaitTime()
         {
-            Log.D("Get Parsent Wait Time: (total tasks exists time, wait time % / 100) \n" + Print(_persentWaitingTime));
+            Log.D("Get Parsent Wait Time: \n" + Print(_persentWaitingTime, "Sum task exists:", "Wait time:"));
             return _persentWaitingTime.Last().Item2;
         }
 
         public double GetParsentOfworkTime()
         {
-            Log.D("Get Parsent Work Time: (total tasks exists time, wait time % / 100) \n" + Print(_persentWorkingTime));
+            Log.D("Get Parsent Work Time: \n" + Print(_persentWorkingTime, "Sum task exists:", "Work time:"));
             return _persentWorkingTime.Last().Item2;
         }
 
-        public double GetFinishedTasks()
+        public int GetFinishedTasks()
         {
-            Log.D("Get Finished Tasks: (time, number)\n" + Print(_finishedTasks));
+            Log.D("Get Finished Tasks: \n" + Print(_finishedTasks, "Time:", "# of tasks:"));
             return _finishedTasks.Last().Item2;
         }
 
-        public double GetCreatedTasks()
+        public int GetCreatedTasks()
         {
-            Log.D("Get Created Tasks: (time, number)\n" + Print(_totalTasks));
+            Log.D("Get Created Tasks: (time, number)\n" + Print(_totalTasks, "Time:", "# of tasks:"));
             return _totalTasks.Last().Item2;
         }
 
@@ -144,21 +144,19 @@ namespace TaskSimulation.Results
             return total;
         }
 
-        public string Print<T, M>(List<Tuple<T, M>> workingSet)
+        public string Print<T, M>(List<Tuple<T, M>> workingSet, string xTitle = "x:", string yTitle = "y:")
         {
             var sb = new StringBuilder();
 
             foreach (var tuple in workingSet)
             {
-                sb.AppendLine($"x: {tuple.Item1}, value {tuple.Item2, -7:#0.###}");
+                sb.AppendLine($"{xTitle} {tuple.Item1, -20}, {yTitle} {tuple.Item2, -7:#0.###}");
             }
             return sb.ToString();
         }
 
         private void AddAverageValue(List<Tuple<double, double>> workingSet, double additionalSize, double newValue)
         {
-            
-
             if (workingSet.Count == 0)
             {
                 if (newValue / additionalSize <= 0)
@@ -168,9 +166,9 @@ namespace TaskSimulation.Results
                 return;
             }
 
-            var prevAverage = workingSet.Last()?.Item2 ?? 0;
-            var prevNumberOfTasks = workingSet.Last()?.Item1 ?? 0;
-            var average = LMath.Average(prevAverage, prevNumberOfTasks, newValue, additionalSize);
+            var prevAverage = workingSet.Last().Item2 ;
+            var prevNumberOfTasks = workingSet.Last().Item1;
+            var average = LMath.AverageIncrementalSize(prevAverage, prevNumberOfTasks, newValue, additionalSize);
             workingSet.Add(new Tuple<double, double>(prevNumberOfTasks + additionalSize, average));
         }
 

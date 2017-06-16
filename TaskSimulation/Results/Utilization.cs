@@ -15,6 +15,7 @@ namespace TaskSimulation.Results
         private readonly List<Worker> _workers;
 
         public TasksWorkStatistics TasksWorkStatistics { get; set; }
+        public WorkersStatistics WorkersStatistics { get; set; }
 
         public Utilization()
         {
@@ -22,6 +23,7 @@ namespace TaskSimulation.Results
             _workers = new List<Worker>();
 
             TasksWorkStatistics = new TasksWorkStatistics(_tasks);
+            WorkersStatistics = new WorkersStatistics();
         }
 
         public void AddWorkers(List<Worker> workers)
@@ -59,6 +61,7 @@ namespace TaskSimulation.Results
         private void UpdateSubscribers<T>(T @event)
         {
             (@event as AEvent)?.Accept(TasksWorkStatistics);
+            (@event as AEvent)?.Accept(WorkersStatistics);
         }
 
 
@@ -82,27 +85,13 @@ namespace TaskSimulation.Results
             return sumWorkersWorkedTime;
         }
 
-        public int GetNumberOfFinishedTasks()
-        {
-            var totalTasksFinished = _tasks.Count(t => t.EndTime != Task.NOT_STARTED);
-            Log.I($"Total Task finished = {totalTasksFinished}");
-            return totalTasksFinished;
-        }
-
-        public int GetNumberOfTotalTasks()
-        {
-            var totalTasks = _tasks.Count;
-            Log.I($"Total Task = {totalTasks}");
-            return totalTasks;
-        }
-
         public double GetTotalWorkersUtilization()
         {
             var sumWorkersBusy = GetWorkersWorkedTime();
-            Log.I($"(S=Start time, E=End time, B=Busy time, T=Total existing time");
+            Log.D($"(S=Start time, E=End time, B=Busy time, T=Total existing time");
             var workersTotalTime = _workers.Sum(w =>
             {
-                Log.I($"{w} (S:{w.Statistics.StartAt,-6:#0.###}, E:{w.Statistics.EndAt,-6:#0.###}) B:{w.Statistics.BusyTime,-6:#0.###} T:{w.Statistics.TotalTime,-6:#0.###}");
+                Log.D($"{w} (S:{w.Statistics.StartAt,-6:#0.###}, E:{w.Statistics.EndAt,-6:#0.###}) B:{w.Statistics.BusyTime,-6:#0.###} T:{w.Statistics.TotalTime,-6:#0.###}");
                 return w.Statistics.TotalTime;
             });
 
