@@ -15,10 +15,9 @@ namespace TaskSimulation.Results
 
         private readonly List<Tuple<double, int>> _workersCount;
         private readonly List<Tuple<double, int>> _workersLeft;
+        private Dictionary<Worker, Utilization.WorkerData> _workers;
 
-        private readonly Dictionary<Worker, WorkerData> _workers;
-
-        public WorkersStatistics()
+        public WorkersStatistics(Dictionary<Worker, Utilization.WorkerData> workers)
         {
             _avarageWorkersEfficiency = new List<Tuple<double, double>>
             {
@@ -35,13 +34,18 @@ namespace TaskSimulation.Results
                 new Tuple<double, int>(0, 0)
             };
 
-            _workers = new Dictionary<Worker, WorkerData>();
+            _workers = workers;//new Dictionary<Worker, Utilization.WorkerData>();
         }
 
-        public double GetAvarageWorkersEfficiency()
+        public double GetLastAvarageWorkersEfficiency()
         {
             Log.D("Get Avarage Workers' Efficiency: (time, average) \n" + Print(_avarageWorkersEfficiency));
             return _avarageWorkersEfficiency.Last().Item2;
+        }
+
+        public List<Tuple<double, double>> GetAvarageWorkersEfficiency()
+        {
+            return _avarageWorkersEfficiency;
         }
 
         public double GetNumberOfTotalWorkers()
@@ -90,16 +94,15 @@ namespace TaskSimulation.Results
             _avarageWorkersEfficiency.Add(new Tuple<double, double>(task.EndTime, newAvarage));
         }
 
-        private WorkerData GetWorkersData(Worker worker)
+        private Utilization.WorkerData GetWorkersData(Worker worker)
         {
             var hasKey = _workers.ContainsKey(worker);
-            if (!hasKey)
+            if (hasKey)
             {
-                var workerData = new WorkerData();
-                _workers.Add(worker, workerData);
+                return _workers[worker];
             }
 
-            return _workers[worker];
+            return null;
         }
 
         public void Update(TaskArrivalEvent @event)
@@ -117,12 +120,7 @@ namespace TaskSimulation.Results
             _workersLeft.Add(new Tuple<double, int>(@event.ArriveTime, _workersCount.Last().Item2 + 1));
         }
 
-        public class WorkerData
-        {
-            public double AvarageEfficiency { get; set; } = 0;
-            public int NumberOfTasksFinished { get; set; } = 0;
-        }
-
+        
 
         public string Print<T, M>(List<Tuple<T, M>> workingSet)
         {

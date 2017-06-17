@@ -90,10 +90,10 @@ namespace TaskSimulationCmd
             Log.I();
             Log.I("----------- Post execution calculations ----------- ", ConsoleColor.Blue);
 
-            var rf = new ResultsFile("test.csv", simulator.Utilization);
+            var rf = new ResultsFile($"test_{DateTime.Now.ToFileTime()}.csv", simulator.Utilization);
             rf.GenerateCsvFile();
             
-            return rf.WriteSummery();
+            return rf.GenerateSummery();
         }
 
         private static InputXmlShema LoadInputFile(string[] args)

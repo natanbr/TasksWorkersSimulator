@@ -74,22 +74,38 @@ namespace TaskSimulation.Results
             return;
         }
 
-        public double GetAvarageProcessingTime()
+        public double GetLastAvarageProcessingTime()
         {
-            Log.D("Get Avarage Processing Time: \n" + Print(_averageProcessingTime, "Task:","Average:"));
+            Log.D("Get Avarage Processing Time: \n" + Print(_averageProcessingTime, "Task:", "Average:"));
             return _averageProcessingTime.Last().Item2;
         }
 
-        public double GetAvarageWaitingTime()
+        public List<Tuple<double, double>> GetAvarageProcessingTime()
+        {
+            return _averageProcessingTime;
+        }
+
+        public double GetLastAvarageWaitingTime()
         {
             Log.D("Get Avarage Waiting Time: \n" + Print(_avarageWatingTime, "Task:", "Average:"));
             return _avarageWatingTime.Last().Item2;
         }
 
-        public double GetAvarageExecutionTime()
+        public List<Tuple<double, double>> GetAvarageWaitingTime()
+        {
+            return _avarageWatingTime;
+        }
+
+        public double GetLastAvarageExecutionTime()
         {
             Log.D("Get Avarage Execution Time (Wait + Process): \n" + Print(_averageExecutionTime, "Task:", "Average:"));
-            return _averageExecutionTime.Last().Item2;
+            
+            return GetAvarageExecutionTime().Last().Item2;
+        }
+
+        public List<Tuple<double, double>> GetAvarageExecutionTime()
+        {
+            return _averageExecutionTime;
         }
 
         public double GetParsentOfWaitTime()

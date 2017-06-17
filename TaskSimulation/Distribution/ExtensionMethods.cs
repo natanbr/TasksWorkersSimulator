@@ -25,5 +25,11 @@ namespace TaskSimulation.Distribution
                 list[n] = value;
             }
         }
+
+        public static void Add<TA,TB>(this IList<Tuple<TA,TB>> list, TA item1 , TB item2)
+        {
+            list.Add(new Tuple<TA, TB>(item1, item2));
+        }
+
     }
 }

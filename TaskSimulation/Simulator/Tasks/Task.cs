@@ -18,6 +18,8 @@ namespace TaskSimulation.Simulator.Tasks
         public double StartTime { get; private set; }
         public double EndTime { get; private set; }
 
+        private Worker _addedTo;
+
         public event Action<Worker> OnTaskAssigned;
         public event Action<Worker> OnAddedToWorker;
 
@@ -30,6 +32,7 @@ namespace TaskSimulation.Simulator.Tasks
 
         public void SetStateAddedTo(Worker worker)
         {
+            _addedTo = worker;
             OnAddedToWorker?.Invoke(worker);
         }
 
@@ -51,6 +54,11 @@ namespace TaskSimulation.Simulator.Tasks
         public override string ToString()
         {
             return $"Task: {_eventCode}" ;
+        }
+
+        public Worker GetWorker()
+        {
+            return _addedTo;
         }
     }
 }

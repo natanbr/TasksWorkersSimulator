@@ -73,6 +73,15 @@ namespace TaskSimulation.Simulator.Workers
             return _tasks.GetFirst();
         }
 
+        /// <summary>
+        /// Get the number of task (including the working and the queue)
+        /// </summary>
+        /// <returns></returns>
+        public int GetNumberOfTasks()
+        {
+            return _tasks.Count();
+        }
+
         public bool IsOnline()
         {
             return Statistics.EndAt == -1;
