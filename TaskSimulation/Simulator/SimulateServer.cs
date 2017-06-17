@@ -9,12 +9,13 @@ namespace TaskSimulation.Simulator
     public class SimulateServer
     {
         public static double SimulationClock { get; private set; } // TNOW
-
-        private TasksJournal _tasksJournal;
-        private WorkersJournal _workersJournal;
         public static double SimulatorMaxRunTime { get; private set; }
+
+
+        private readonly TasksJournal _tasksJournal;
+        private readonly WorkersJournal _workersJournal;
         private readonly SimulationEventMan _simulationEvents;
-        public Utilization Utilization { get; private set; }
+        private readonly Utilization _utilization;// { get; private set; }
 
         public SimulateServer(double maxSimulationTime = Int32.MaxValue)
         {
@@ -22,7 +23,7 @@ namespace TaskSimulation.Simulator
             SimulationClock = 0;
             SimulatorMaxRunTime = maxSimulationTime;
             
-            Utilization = new Utilization();
+            _utilization = new Utilization();
             _tasksJournal = new TasksJournal();
             _workersJournal = new WorkersJournal();
         }
@@ -33,8 +34,6 @@ namespace TaskSimulation.Simulator
             Task.TASK_ID = 0;
 
             _simulationEvents.InitializeGenesisEvents(1, initialNumOfWorkers);
-
-            //Utilization.AddWorkers(_workersJournal.ActiveWorkers);
 
             Log.D("* * * * * * * Init * * * * * * *");
         }
@@ -64,7 +63,7 @@ namespace TaskSimulation.Simulator
                     nextEvent.Accept(_tasksJournal);
                 }
 
-                nextEvent.Accept(Utilization);
+                nextEvent.Accept(_utilization);
 
                 #if DEBUG
                 PrintSimulationState();
@@ -74,6 +73,11 @@ namespace TaskSimulation.Simulator
             }
 
             //PrintSimulationState();
+        }
+
+        public Utilization GetResults()
+        {
+            return _utilization;
         }
 
         public void PrintSimulationState()

@@ -47,9 +47,9 @@ namespace TaskSimulationTests.Simulator
             var executionSummary = SingleExecution();
 
             //Assert.AreEqual(100, executionSummary.TotalWorkersUtilization *100); //%
-            Assert.AreEqual(100, executionSummary.FinishedTasksForSingleExecution * 100);  //%
-            Assert.AreEqual(Math.Round(4.98 / 8.98, 3), Math.Round(executionSummary.TotalTasksWait, 3));
-            Assert.AreEqual(5, executionSummary.TotalTasksForSingleExecution);
+            Assert.AreEqual(100, executionSummary.TasksWorkStatistics.GetFinishedTasks() * 100);  //%
+            Assert.AreEqual(Math.Round(4.98 / 8.98, 3), Math.Round(executionSummary.TasksWorkStatistics.TaskWereInWaitList(), 3));
+            Assert.AreEqual(5, executionSummary.TasksWorkStatistics.GetCreatedTasks());
         }
 
         [TestMethod()]
@@ -105,8 +105,8 @@ namespace TaskSimulationTests.Simulator
             var executionSummary = SingleExecution();
 
             //Assert.AreEqual((int)((0 / 23.5) * 100), (int)(executionSummary.TotalWorkersUtilization * 100), "TotalWorkersUtilization");
-            Assert.AreEqual(6, executionSummary.FinishedTasksForSingleExecution, "FinishedTasksForSingleExecution");
-            Assert.AreEqual(10, executionSummary.TotalTasksForSingleExecution, "TotalTasksForSingleExecution");
+            Assert.AreEqual(6, executionSummary.TasksWorkStatistics.GetFinishedTasks(), "FinishedTasksForSingleExecution");
+            Assert.AreEqual(10, executionSummary.TasksWorkStatistics.GetCreatedTasks(), "TotalTasksForSingleExecution");
         }
 
         [TestMethod()]
@@ -144,7 +144,7 @@ namespace TaskSimulationTests.Simulator
             Assert.AreNotEqual(s1 + s2 + s3 + s4, s5 + s6 + s7 + s8);
         }
 
-        public ExecutionSummary SingleExecution()
+        public Utilization SingleExecution()
         {
             var simulator = new SimulateServer(_maxSimulationTime);
 
@@ -156,7 +156,9 @@ namespace TaskSimulationTests.Simulator
             Log.I();
             Log.I();
 
-            var executionStatistics = new ExecutionSummary()
+            return simulator.GetResults();
+
+            /*var executionStatistics = new ExecutionSummary()
             {
                 ExecutionTime = _maxSimulationTime,
 
@@ -167,7 +169,7 @@ namespace TaskSimulationTests.Simulator
                 TotalTasksForSingleExecution = simulator.Utilization.TasksWorkStatistics.GetCreatedTasks(),
             };
 
-            return executionStatistics;
+            return executionStatistics;*/
         } 
     }
 }

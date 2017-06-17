@@ -21,12 +21,12 @@ namespace TaskSimulation.Results
         {
             var summery = GenerateSummery();
             var avarageExecutionTime = GenerateAvarageExecutionTime();
-            //_sw.WriteLine(summery);
-            //_sw.WriteLine();
-            //_sw.WriteLine(avarageExecutionTime);
-            //_sw.WriteLine();
-            //_sw.WriteLine(GenerateAvarageWorkerTime());
-            //_sw.WriteLine();
+            _sw.WriteLine(summery);
+            _sw.WriteLine();
+            _sw.WriteLine(avarageExecutionTime);
+            _sw.WriteLine();
+            _sw.WriteLine(GenerateAvarageWorkerTime());
+            _sw.WriteLine();
             _sw.WriteLine(GenerateSystem());
             _sw.Close();
         }
@@ -94,6 +94,7 @@ namespace TaskSimulation.Results
         public string GenerateSystem()
         {
             var sb = new StringBuilder();
+            _uData.SystemUtilizationStatistics.AddLastValue();
             var systemUtilization = _uData.SystemUtilizationStatistics.GetSystemUtilization();
             var avarageSystemUtilization = _uData.SystemUtilizationStatistics.GetAvarageSystemUtilization();
 

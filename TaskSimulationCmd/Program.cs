@@ -90,7 +90,7 @@ namespace TaskSimulationCmd
             Log.I();
             Log.I("----------- Post execution calculations ----------- ", ConsoleColor.Blue);
 
-            var rf = new ResultsFile($"test_{DateTime.Now.ToFileTime()}.csv", simulator.Utilization);
+            var rf = new ResultsFile($"test_{DateTime.Now.ToFileTime()}.csv", simulator.GetResults());
             rf.GenerateCsvFile();
             
             return rf.GenerateSummery();
