@@ -16,6 +16,7 @@ namespace TaskSimulation.Simulator
         private readonly WorkersJournal _workersJournal;
         private readonly SimulationEventMan _simulationEvents;
         private readonly Utilization _utilization;// { get; private set; }
+        private readonly DebugSimpleOutput _dbPrint;
 
         public SimulateServer(double maxSimulationTime = Int32.MaxValue)
         {
@@ -26,6 +27,7 @@ namespace TaskSimulation.Simulator
             _utilization = new Utilization();
             _tasksJournal = new TasksJournal();
             _workersJournal = new WorkersJournal();
+            _dbPrint = new DebugSimpleOutput();
         }
 
         public void Initialize(long initialNumOfWorkers)
@@ -64,13 +66,17 @@ namespace TaskSimulation.Simulator
                 }
 
                 nextEvent.Accept(_utilization);
+                nextEvent.Accept(_dbPrint);
 
                 #if DEBUG
                 PrintSimulationState();
                 #endif
 
                 nextEvent = _simulationEvents.GetNextEvent();
+
             }
+
+            //Log.D(_dbPrint.ToString());
 
             //PrintSimulationState();
         }
@@ -78,6 +84,11 @@ namespace TaskSimulation.Simulator
         public Utilization GetResults()
         {
             return _utilization;
+        }
+
+        public string GetShortOutput()
+        {
+            return _dbPrint.ToString();
         }
 
         public void PrintSimulationState()

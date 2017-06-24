@@ -60,6 +60,7 @@
     <Compile Include="Distribution\SimDistribution.cs" />
     <Compile Include="Distribution\ExtensionMethods.cs" />
     <Compile Include="ChooseAlgorithms\IChooseWorkerAlgo.cs" />
+    <Compile Include="Results\DebugSimpleOutput.cs" />
     <Compile Include="Results\ResultsFile.cs" />
     <Compile Include="Results\SystemUtilizationStatistics.cs" />
     <Compile Include="Results\WorkersStatistics.cs" />
@@ -81,12 +82,12 @@
     <Compile Include="Simulator\Events\TaskFinishedEvent.cs" />
     <Compile Include="Simulator\Events\SimulationEventMan.cs" />
     <Compile Include="Simulator\Events\TaskArrivalEvent.cs" />
-    <Compile Include="Simulator\Tasks\TasksQueue.cs" />
+    <Compile Include="Simulator\Events\Tasks\TasksQueue.cs" />
     <Compile Include="Simulator\Workers\WorkerDistribution.cs" />
     <Compile Include="Simulator\Workers\Grade.cs" />
     <Compile Include="Simulator\Workers\IWorkersGenerator.cs" />
-    <Compile Include="Simulator\Tasks\Task.cs" />
-    <Compile Include="Simulator\Tasks\TasksJournal.cs" />
+    <Compile Include="Simulator\Events\Tasks\Task.cs" />
+    <Compile Include="Simulator\Events\Tasks\TasksJournal.cs" />
     <Compile Include="Simulator\ISimulatable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Simulator\SimulateServer.cs" />

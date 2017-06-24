@@ -118,6 +118,7 @@ namespace TaskSimulation.Results
         {
             public double AvarageEfficiency { get; set; } = 0;
             public int NumberOfTasksFinished { get; set; } = 0;
+            public double TimeAlive { get; set; }
         }
     }
 }

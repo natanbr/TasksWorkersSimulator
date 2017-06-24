@@ -61,7 +61,7 @@
     <Compile Include="Simulator\PriorityQueueTests.cs" />
     <Compile Include="Simulator\ReflectionGames.cs" />
     <Compile Include="Simulator\SaveLoadTests.cs" />
-    <Compile Include="Simulator\UtilizationTests.cs" />
+    <Compile Include="Simulator\ResultsTests.cs" />
     <Compile Include="Simulator\SimulateServerTests.cs" />
   </ItemGroup>
   <ItemGroup>

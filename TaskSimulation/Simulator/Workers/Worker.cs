@@ -1,4 +1,5 @@
-﻿using TaskSimulation.Distribution;
+﻿using System.Collections.Generic;
+using TaskSimulation.Distribution;
 using TaskSimulation.Results;
 using TaskSimulation.Simulator.Tasks;
 
@@ -6,7 +7,7 @@ namespace TaskSimulation.Simulator.Workers
 {
     public class Worker
     {
-        private long ID;
+        private readonly long _id;
         private readonly TasksQueue _tasks;
         public Grade Grade { get; set; }
         public WorkerExecData Statistics { get; set; }
@@ -15,11 +16,16 @@ namespace TaskSimulation.Simulator.Workers
 
         public Worker(long id, WorkerQualies qualies)
         {
-            ID = id;
+            _id = id;
             _tasks = new TasksQueue();
             Statistics = new WorkerExecData();
             Distribution = new WorkerDistribution(qualies);
             Grade = SimDistribution.I.GradeSystem.InitialGrade();
+        }
+
+        public long GetWorkerID()
+        {
+            return _id;
         }
 
         public void AddTask(Task task)
@@ -53,7 +59,7 @@ namespace TaskSimulation.Simulator.Workers
 
         public override string ToString()
         {
-            return $"Worker: {ID,-3:##}";
+            return $"Worker: {_id,-3:##}";
         }
 
         private void ContinueToNextTask()
@@ -72,6 +78,12 @@ namespace TaskSimulation.Simulator.Workers
         {
             return _tasks.GetFirst();
         }
+
+        public List<Task> GetQueue()
+        {
+            return _tasks.ToList();
+        }
+
 
         /// <summary>
         /// Get the number of task (including the working and the queue)

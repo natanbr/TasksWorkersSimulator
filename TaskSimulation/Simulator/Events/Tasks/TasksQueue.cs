@@ -34,6 +34,11 @@ namespace TaskSimulation.Simulator.Tasks
             return _queuedTasks[0];
         }
 
+        public List<Task> ToList()
+        {
+            return _queuedTasks;
+        }
+
         public bool HasAvailableTask()
         {
             return _queuedTasks == null || _queuedTasks.Count > 0;

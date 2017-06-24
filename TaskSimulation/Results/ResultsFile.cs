@@ -19,11 +19,9 @@ namespace TaskSimulation.Results
 
         public void GenerateCsvFile()
         {
-            var summery = GenerateSummery();
-            var avarageExecutionTime = GenerateAvarageExecutionTime();
-            _sw.WriteLine(summery);
+            _sw.WriteLine(GenerateSummery());
             _sw.WriteLine();
-            _sw.WriteLine(avarageExecutionTime);
+            _sw.WriteLine(GenerateAvarageExecutionTime());
             _sw.WriteLine();
             _sw.WriteLine(GenerateAvarageWorkerTime());
             _sw.WriteLine();
@@ -34,19 +32,18 @@ namespace TaskSimulation.Results
         public string GenerateSummery()
         {
             var sb = new StringBuilder();
-            sb.AppendLine($"Execution")
+            sb.AppendLine($"Execution");
                 //.AppendLine($"Workers Utilization:,              {_uData.GetTotalWorkersUtilization() * 100:N2}%")
                 //.AppendLine($"System Utilization: ,            {_uData.GetSystemUtilization() * 100:N2}%")
-                .AppendLine($"Tasks Wait:,                       {_uData.TasksWorkStatistics.GetFinishedTasks() * 100:N2}%")
-                .AppendLine($"Finished Tasks:,                   {_uData.TasksWorkStatistics.GetCreatedTasks()}")
-                .AppendLine($"Total tasks:,                      {_uData.TasksWorkStatistics.TaskWereInWaitList()}")
-                .AppendLine($"Workers Avarage Pricessing time:,  {_uData.TasksWorkStatistics.GetLastAvarageProcessingTime()}")
-                .AppendLine($"Workers Avarage Waiting Time:,     {_uData.TasksWorkStatistics.GetLastAvarageWaitingTime()}")
-                .AppendLine($"Workers Avarage Execution Time:,   {_uData.TasksWorkStatistics.GetLastAvarageExecutionTime()}")
-                .AppendLine($"Workers Avarage Parsent Of Wait:,  {_uData.TasksWorkStatistics.GetParsentOfWaitTime()}")
-                .AppendLine($"Workers Parsent Of Work Time:,     {_uData.TasksWorkStatistics.GetParsentOfworkTime()}")
-                .AppendLine($"Workers Avarage Efficiency:,       {_uData.WorkersStatistics.GetLastAvarageWorkersEfficiency()}")
-                .AppendLine($"Total Workers:,                    {_uData.WorkersStatistics.GetNumberOfTotalWorkers()}");
+                sb.AppendLine($"Finished Tasks:,,,,,                   {_uData.TasksWorkStatistics.GetFinishedTasks() }");
+                sb.AppendLine($"Created Tasks:,,,,,                    {_uData.TasksWorkStatistics.GetCreatedTasks()}");
+                sb.AppendLine($"Workers Avarage Pricessing time:,,,,,  {_uData.TasksWorkStatistics.GetLastAvarageProcessingTime()}")
+                .AppendLine($"Workers Avarage Waiting Time:,,,,,     {_uData.TasksWorkStatistics.GetLastAvarageWaitingTime()}")
+                .AppendLine($"Workers Avarage Execution Time:,,,,,   {_uData.TasksWorkStatistics.GetLastAvarageExecutionTime()}")
+                .AppendLine($"Workers Avarage Parsent Of Wait:,,,,,  {_uData.TasksWorkStatistics.GetParsentOfWaitTime()}")
+                .AppendLine($"Workers Parsent Of Work Time:,,,,,     {_uData.TasksWorkStatistics.GetParsentOfworkTime() * 100}%")
+                .AppendLine($"Workers Avarage Efficiency:,,,,,       {_uData.WorkersStatistics.GetLastAvarageWorkersEfficiency()}")
+                .AppendLine($"Total Workers:,,,,,                    {_uData.WorkersStatistics.GetNumberOfTotalWorkers()}");
 
             return sb.ToString();
         }

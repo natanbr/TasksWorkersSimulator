@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using TaskSimulation.Simulator;
 using TaskSimulation.Simulator.Events;
+using TaskSimulation.Simulator.Tasks;
 using TaskSimulation.Simulator.Workers;
 using TaskSimulation.Utiles;
 
@@ -16,6 +17,7 @@ namespace TaskSimulation.Results
         private readonly List<Tuple<double, int>> _workersCount;
         private readonly List<Tuple<double, int>> _workersLeft;
         private Dictionary<Worker, Utilization.WorkerData> _workers;
+        private int _numberOfWorkersBefore;
 
         public WorkersStatistics(Dictionary<Worker, Utilization.WorkerData> workers)
         {
@@ -36,6 +38,34 @@ namespace TaskSimulation.Results
 
             _workers = workers;//new Dictionary<Worker, Utilization.WorkerData>();
         }
+
+        #region Updates
+
+        public void Update(TaskArrivalEvent @event)
+        {
+        }
+
+        public void Update(WorkerArrivalEvent @event)
+        {
+            _workersCount.Add(new Tuple<double, int>(@event.ArriveTime, _workersCount.Last().Item2 + 1));
+        }
+
+        public void Update(WorkerLeaveEvent @event)
+        {
+            _workersCount.Add(new Tuple<double, int>(@event.ArriveTime, _workersCount.Last().Item2 - 1));
+            _workersLeft.Add(new Tuple<double, int>(@event.ArriveTime, _workersCount.Last().Item2 + 1));
+        }
+
+        public void Update(TaskFinishedEvent @event)
+        {
+            var task = @event.Task;
+            var worker = @event.Worker;
+
+            UpdateAverageEfficiency(worker, task);
+        }
+
+        #endregion
+
 
         public double GetLastAvarageWorkersEfficiency()
         {
@@ -70,26 +100,39 @@ namespace TaskSimulation.Results
 
             return sumWorkersWorkedTime;
         }
-        public void Update(TaskFinishedEvent @event)
-        {
-            var task = @event.Task;
-            var worker = @event.Worker;
 
-            var numberOfWorkersBefore = _workers.Count;
+
+        /// <summary>
+        /// The Aveage efficiency is the avarage of the wokres efficiency: sum the workers avage/ number of workers
+        /// Calculate the workers avarage efficiency: sum the working time/ number of tasks
+        /// </summary>
+        /// <param name="worker"></param>
+        /// <param name="task"></param>
+        private void UpdateAverageEfficiency(Worker worker, Task task)
+        {
+            if (_numberOfWorkersBefore == 0)
+                _numberOfWorkersBefore = _workers.Count;
+
             var data = GetWorkersData(worker);
 
             var workersOldAvarage = data.AvarageEfficiency;
-            var prevNumOfTasks = data.NumberOfTasksFinished;
+            //var prevNumOfTasks = data.NumberOfTasksFinished; 
             var newValue = task.EndTime - task.StartTime;
-            data.NumberOfTasksFinished++;
+            var prevTime = data.TimeAlive;
 
             // Add value to avarage
-            var newWorkerAverageEfficiency = LMath.Average(workersOldAvarage, prevNumOfTasks, newValue, data.NumberOfTasksFinished);
+            var newWorkerAverageEfficiency = LMath.Average(workersOldAvarage, prevTime, newValue, task.EndTime);
             var deltaInWorkersAvarage = newWorkerAverageEfficiency - data.AvarageEfficiency;
-            data.AvarageEfficiency = newWorkerAverageEfficiency;
-
             var prevAvarage = _avarageWorkersEfficiency.Last().Item2;
-            var newAvarage = LMath.Average(prevAvarage, numberOfWorkersBefore, deltaInWorkersAvarage, _workers.Count);
+            var newAvarage = LMath.Average(prevAvarage, _numberOfWorkersBefore, deltaInWorkersAvarage, _workers.Count);
+
+            if (newAvarage > 1)
+                Log.Err("ASDFASDF");
+
+            data.AvarageEfficiency = newWorkerAverageEfficiency;
+            data.TimeAlive = task.EndTime;
+            data.NumberOfTasksFinished++;
+            _numberOfWorkersBefore = _workers.Count;
 
             _avarageWorkersEfficiency.Add(new Tuple<double, double>(task.EndTime, newAvarage));
         }
@@ -105,20 +148,7 @@ namespace TaskSimulation.Results
             return null;
         }
 
-        public void Update(TaskArrivalEvent @event)
-        {
-        }
-
-        public void Update(WorkerArrivalEvent @event)
-        {
-            _workersCount.Add(new Tuple<double, int>(@event.ArriveTime, _workersCount.Last().Item2 + 1));
-        }
-
-        public void Update(WorkerLeaveEvent @event)
-        {
-            _workersCount.Add(new Tuple<double, int>(@event.ArriveTime, _workersCount.Last().Item2 - 1));
-            _workersLeft.Add(new Tuple<double, int>(@event.ArriveTime, _workersCount.Last().Item2 + 1));
-        }
+        
 
         
 
@@ -134,3 +164,4 @@ namespace TaskSimulation.Results
         }
     }
 }
+

@@ -30,6 +30,11 @@ namespace TaskSimulation.Simulator.Tasks
             _eventCode = TASK_ID++;
         }
 
+        public int GetTaskId()
+        {
+            return _eventCode;
+        }
+
         public void SetStateAddedTo(Worker worker)
         {
             _addedTo = worker;

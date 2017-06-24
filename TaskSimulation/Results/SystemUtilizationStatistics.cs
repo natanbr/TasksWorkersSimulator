@@ -128,6 +128,9 @@ namespace TaskSimulation.Results
             time = time == 0 ? 1 : time; //In case time is 0
             var deltaTime = time - _lastRecord;
             // Using the last value (not the new one)
+            //           old * (last number of workers * previous time) + (system utilization * delta time *  last Number Of Working Workers)
+            // Avarage = ------------------------------------------------------------------------------------------------------------------------------
+            //                                           last number of all workers * total time
             var newAvarage = LMath.Average(oldAvarage, _lastNumberOfWorkers * _lastRecord, _systemUtilization.GetFromEnd(1).Item2 * deltaTime * _lastNumberOfWorkingWorkers, _lastNumberOfWorkers * time);
             _avarageSystemUtilization.AddUnique(time, newAvarage);
             _lastRecord = time;

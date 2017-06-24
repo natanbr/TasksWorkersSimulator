@@ -123,13 +123,15 @@ namespace TaskSimulation.Results
         public int GetFinishedTasks()
         {
             Log.D("Get Finished Tasks: \n" + Print(_finishedTasks, "Time:", "# of tasks:"));
-            return _finishedTasks.Last().Item2;
+            var ft = _finishedTasks.Last().Item2;
+            return ft;
         }
 
         public int GetCreatedTasks()
         {
             Log.D("Get Created Tasks: (time, number)\n" + Print(_totalTasks, "Time:", "# of tasks:"));
-            return _totalTasks.Last().Item2;
+            var tt = _totalTasks.Last().Item2;
+            return tt;
         }
 
         public double TaskWereInWaitList()
