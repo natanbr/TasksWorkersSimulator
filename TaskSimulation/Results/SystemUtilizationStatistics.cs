@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using TaskSimulation.Distribution;
 using TaskSimulation.Simulator;
@@ -11,6 +12,7 @@ namespace TaskSimulation.Results
 {
     public class SystemUtilizationStatistics : ISimulatable
     {
+        private readonly DataTable _data;
         private readonly List<Tuple<double, double>> _avarageSystemUtilization;
         private readonly List<Tuple<double, double>> _systemUtilization;
 
@@ -23,6 +25,12 @@ namespace TaskSimulation.Results
             _systemUtilization = new List<Tuple<double, double>>();//{new Tuple<double, double>(0, 0) };
 
             _avarageSystemUtilization = new List<Tuple<double, double>>();//{new Tuple<double, double>(0, 0)};
+
+            _data = new DataTable("SystemUtilizationStatistics");
+            _data.Columns.Add("Time", typeof(double));
+            _data.Columns.Add("Utilization", typeof(double));
+            _data.Columns.Add("Average", typeof(double));
+            _data.Columns.Add("NumberOfWorkers", typeof(double));
         }
 
         public void Update(TaskArrivalEvent @event)
@@ -73,7 +81,6 @@ namespace TaskSimulation.Results
                 _lastNumberOfWorkingWorkers--;
             }
         }
-    
 
         public void Update(WorkerArrivalEvent @event)
         {
@@ -100,6 +107,12 @@ namespace TaskSimulation.Results
             return _systemUtilization;
         }
 
+        public DataTable GetData()
+        {
+
+            return _data;
+        }
+
         public void AddLastValue()
         {
             var last = _systemUtilization.Last();
@@ -114,25 +127,38 @@ namespace TaskSimulation.Results
             if (_avarageSystemUtilization.Count == 0  || (_avarageSystemUtilization.Count == 1 && _avarageSystemUtilization[0].Item1.Equals(time)))
             {
                 _avarageSystemUtilization.AddUnique(time, newValue);
+                _data.Rows.Add(time, newValue, newValue, 0);
                 return;
             }
 
             var last = _avarageSystemUtilization.Last();
 
+            time = time == 0 ? 1 : time; //In case time is 0
+            var deltaTime = time - _lastRecord;
+
+
             if (last.Item1.Equals(time))
+            {
                 last = _avarageSystemUtilization.GetFromEnd(1);
+
+                if (_avarageSystemUtilization.Count >= 2)
+                    deltaTime = _avarageSystemUtilization.GetFromEnd(0).Item1 - _avarageSystemUtilization.GetFromEnd(1).Item1;
+                else
+                    deltaTime = _avarageSystemUtilization.GetFromEnd(0).Item1;
+
+                _lastRecord = last.Item1;
+            }
 
             var oldAvarage = last.Item2;
 
-
-            time = time == 0 ? 1 : time; //In case time is 0
-            var deltaTime = time - _lastRecord;
             // Using the last value (not the new one)
             //           old * (last number of workers * previous time) + (system utilization * delta time *  last Number Of Working Workers)
             // Avarage = ------------------------------------------------------------------------------------------------------------------------------
             //                                           last number of all workers * total time
-            var newAvarage = LMath.Average(oldAvarage, _lastNumberOfWorkers * _lastRecord, _systemUtilization.GetFromEnd(1).Item2 * deltaTime * _lastNumberOfWorkingWorkers, _lastNumberOfWorkers * time);
+            var newAvarage = LMath.Average(oldAvarage, _lastNumberOfWorkers * _lastRecord, 
+                _systemUtilization.GetFromEnd(1).Item2 * deltaTime * _lastNumberOfWorkingWorkers, _lastNumberOfWorkers * time);
             _avarageSystemUtilization.AddUnique(time, newAvarage);
+            _data.Rows.Add(time, newValue, newAvarage, _lastNumberOfWorkers);
             _lastRecord = time;
         }
 

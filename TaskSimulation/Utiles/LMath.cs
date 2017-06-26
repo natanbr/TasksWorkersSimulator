@@ -22,7 +22,7 @@ namespace TaskSimulation.Utiles
                 return oldAverage;
 
             Log.D("Grade Updated: average_new = (average_old * oldSize + newValue) / total_Work_Time = \n " +
-                $"({oldAverage} * {oldSize} + {newValue}) / {oldSize + newSize}" +
+                $"({oldAverage} * {oldSize} + {newValue}) / {oldSize}" +
                 $"={(oldAverage * oldSize + newValue) / (newSize)}");
 
             return ((oldAverage * oldSize) + newValue) / (newSize);

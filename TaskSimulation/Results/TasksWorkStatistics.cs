@@ -21,6 +21,7 @@ namespace TaskSimulation.Results
 
         private readonly List<Tuple<double, int>> _finishedTasks;
         private readonly List<Tuple<double, int>> _totalTasks;
+        private readonly List<Tuple<double, int>> _taskChanges;
 
         private readonly List<Task> _tasks;
 
@@ -33,35 +34,38 @@ namespace TaskSimulation.Results
             _persentWorkingTime = new List<Tuple<double, double>> { new Tuple<double, double>(0, 0) };
             _finishedTasks = new List<Tuple<double, int>> { new Tuple<double, int>(0, 0) };
             _totalTasks = new List<Tuple<double, int>> { new Tuple<double, int>(0, 0) };
-
+            _taskChanges = new List<Tuple<double, int>> { new Tuple<double, int>(0, 0) };
             _tasks = tasks;
         }
 
         public void Update(TaskFinishedEvent @event)
         {
             var task = @event.Task;
+            var time = @event.ArriveTime;
 
             var newProcessTime = task.EndTime - task.StartTime;
             var newWaitingTime = task.StartTime - task.CreatedTime;
             var newExecutionTime = task.EndTime- task.CreatedTime;
             var additionalSize = 1;
 
-            AddAverageValue(_averageProcessingTime, additionalSize, newProcessTime);
-            AddAverageValue(_avarageWatingTime, additionalSize, newWaitingTime);
-            AddAverageValue(_averageExecutionTime, additionalSize, newExecutionTime);
+            AddAverageValue(_averageProcessingTime, time, additionalSize, newProcessTime);
+            AddAverageValue(_avarageWatingTime, time, additionalSize, newWaitingTime);
+            AddAverageValue(_averageExecutionTime, time, additionalSize, newExecutionTime);
 
             var additionalTime = newExecutionTime;
 
-            AddAverageValue(_persentWaitingTime, additionalTime, newWaitingTime);
-            AddAverageValue(_persentWorkingTime, additionalTime, newProcessTime);
+            AddAverageValue(_persentWaitingTime, time, additionalTime, newWaitingTime);
+            AddAverageValue(_persentWorkingTime, time, additionalTime, newProcessTime);
 
-            _finishedTasks.Add(new Tuple<double, int>(task.EndTime, _finishedTasks.Count));
+            _finishedTasks.Add(time,  _finishedTasks.Count);
+            _taskChanges.Add(time, _taskChanges.Last().Item2 - 1);
         }
 
         public void Update(TaskArrivalEvent @event)
         {
             var task = @event.Task;
-            _totalTasks.Add(new Tuple<double, int>(task.CreatedTime, _totalTasks.Count));
+            _totalTasks.Add(task.CreatedTime, _totalTasks.Count);
+            _taskChanges.Add(@event.ArriveTime, _taskChanges.Last().Item2 + 1);
         }
 
         public void Update(WorkerArrivalEvent @event)
@@ -94,6 +98,11 @@ namespace TaskSimulation.Results
         public List<Tuple<double, double>> GetAvarageWaitingTime()
         {
             return _avarageWatingTime;
+        }
+
+        public List<Tuple<double, int>> GetTaksChanges()
+        {
+            return _taskChanges;
         }
 
         public double GetLastAvarageExecutionTime()
@@ -173,23 +182,21 @@ namespace TaskSimulation.Results
             return sb.ToString();
         }
 
-        private void AddAverageValue(List<Tuple<double, double>> workingSet, double additionalSize, double newValue)
+        private void AddAverageValue(List<Tuple<double, double>> workingSet, double time, double additionalSize, double newValue)
         {
             if (workingSet.Count == 0)
             {
                 if (newValue / additionalSize <= 0)
                     return;
             
-                workingSet.Add(new Tuple<double, double>(additionalSize, newValue/ additionalSize));
+                workingSet.Add(time, newValue/ additionalSize);
                 return;
             }
 
             var prevAverage = workingSet.Last().Item2 ;
             var prevNumberOfTasks = workingSet.Last().Item1;
             var average = LMath.AverageIncrementalSize(prevAverage, prevNumberOfTasks, newValue, additionalSize);
-            workingSet.Add(new Tuple<double, double>(prevNumberOfTasks + additionalSize, average));
+            workingSet.Add(time, average);
         }
-
-
     }
 }

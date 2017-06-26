@@ -58,11 +58,11 @@
     <Compile Include="ChooseAlgorithms\OriginalGradeCalc.cs" />
     <Compile Include="Distribution\ReflectIContinuousDistribution.cs" />
     <Compile Include="Distribution\SimDistribution.cs" />
-    <Compile Include="Distribution\ExtensionMethods.cs" />
     <Compile Include="ChooseAlgorithms\IChooseWorkerAlgo.cs" />
     <Compile Include="Results\DebugSimpleOutput.cs" />
     <Compile Include="Results\ResultsFile.cs" />
     <Compile Include="Results\SystemUtilizationStatistics.cs" />
+    <Compile Include="Results\SystemUtilizationStatistics2.cs" />
     <Compile Include="Results\WorkersStatistics.cs" />
     <Compile Include="Results\TasksWorkStatistics.cs" />
     <Compile Include="Simulator\Events\IPeriodicEvent.cs" />

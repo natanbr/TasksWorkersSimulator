@@ -20,6 +20,7 @@ namespace TaskSimulation.Results
         public WorkersStatistics WorkersStatistics { get; set; }
 
         public SystemUtilizationStatistics SystemUtilizationStatistics { get; set; }
+        public SystemUtilizationStatistics2 SystemUtilizationStatistics2 { get; set; }
 
         public Utilization()
         {
@@ -29,6 +30,7 @@ namespace TaskSimulation.Results
             TasksWorkStatistics = new TasksWorkStatistics(_tasks);
             WorkersStatistics = new WorkersStatistics(_workers);
             SystemUtilizationStatistics = new SystemUtilizationStatistics();
+            SystemUtilizationStatistics2 = new SystemUtilizationStatistics2();
         }
 
         public void Update(TaskArrivalEvent @event)
@@ -58,6 +60,7 @@ namespace TaskSimulation.Results
             (@event as AEvent)?.Accept(TasksWorkStatistics);
             (@event as AEvent)?.Accept(WorkersStatistics);
             (@event as AEvent)?.Accept(SystemUtilizationStatistics);
+            (@event as AEvent)?.Accept(SystemUtilizationStatistics2);
         }
 
 

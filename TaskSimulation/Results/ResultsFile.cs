@@ -21,6 +21,8 @@ namespace TaskSimulation.Results
         {
             _sw.WriteLine(GenerateSummery());
             _sw.WriteLine();
+            _sw.WriteLine(GetTaskChanges());
+            _sw.WriteLine();
             _sw.WriteLine(GenerateAvarageExecutionTime());
             _sw.WriteLine();
             _sw.WriteLine(GenerateAvarageWorkerTime());
@@ -55,8 +57,8 @@ namespace TaskSimulation.Results
             var processingTime = _uData.TasksWorkStatistics.GetAvarageProcessingTime();
             var waitingTime = _uData.TasksWorkStatistics.GetAvarageWaitingTime();
 
-            sb.AppendLine($"Avarage Tasks' Execution Time");
-            sb.AppendLine($"Time, Avarage Execution Time, Avarage Processing Time, Avarage waiting  Time");
+            sb.AppendLine($"Average Tasks' Execution Time");
+            sb.AppendLine($"Time, Average Execution Time, Average Processing Time, Average waiting  Time");
             for (var i = 0; i < executionTime.Count; i++)
             {
                 var et = executionTime[i];
@@ -67,6 +69,22 @@ namespace TaskSimulation.Results
                     sb.AppendLine($"{et.Item1},{et.Item2}, {pt.Item2}, {wt.Item2}");
                 else
                     sb.AppendLine($"{et.Item1},{et.Item2}");
+            }
+
+            return sb.ToString();
+        }
+
+        public string GetTaskChanges()
+        {
+            var sb = new StringBuilder();
+            var workersEfficiency = _uData.TasksWorkStatistics.GetTaksChanges();
+
+            sb.AppendLine($"Log of added and arriving (+1) and finished (-1) task events");
+            sb.AppendLine($"Time, Tasks In Queue");
+
+            foreach (var ef in workersEfficiency)
+            {
+                sb.AppendLine($"{ef.Item1},{ef.Item2}");
             }
 
             return sb.ToString();
@@ -93,12 +111,17 @@ namespace TaskSimulation.Results
             var sb = new StringBuilder();
             _uData.SystemUtilizationStatistics.AddLastValue();
             var systemUtilization = _uData.SystemUtilizationStatistics.GetSystemUtilization();
+
+            var systemUtilization2 = _uData.SystemUtilizationStatistics2.GetSystemUtilization();
+            var avarageSystemUtilization2 = _uData.SystemUtilizationStatistics2.GetAvarageSystemUtilization();
+
             var avarageSystemUtilization = _uData.SystemUtilizationStatistics.GetAvarageSystemUtilization();
+            var data = _uData.SystemUtilizationStatistics.GetData();
 
             sb.AppendLine($"System Utilization = (Number of working workers/ Num of workers) ");
             sb.AppendLine($"Avarage System Utilization = Avarage of System Utilization");
-            sb.AppendLine($"Time, System Utilization ,Avarage");
-            sb.AppendLine(ListToCSVFormat(systemUtilization, avarageSystemUtilization));
+            sb.AppendLine($"Time, System Utilization, Avarage");
+            sb.AppendLine(ListToCSVFormat(systemUtilization2, avarageSystemUtilization2));
             return sb.ToString();
         }
 
