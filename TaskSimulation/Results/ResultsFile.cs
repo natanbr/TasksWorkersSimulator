@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace TaskSimulation.Results
 {
@@ -11,6 +9,7 @@ namespace TaskSimulation.Results
     {
         private StreamWriter _sw;
         private Utilization _uData;
+
         public ResultsFile(string file, Utilization utilization)
         {
             _sw = new StreamWriter(file);
@@ -37,15 +36,18 @@ namespace TaskSimulation.Results
             sb.AppendLine($"Execution");
                 //.AppendLine($"Workers Utilization:,              {_uData.GetTotalWorkersUtilization() * 100:N2}%")
                 //.AppendLine($"System Utilization: ,            {_uData.GetSystemUtilization() * 100:N2}%")
-                sb.AppendLine($"Finished Tasks:,,,,,                   {_uData.TasksWorkStatistics.GetFinishedTasks() }");
-                sb.AppendLine($"Created Tasks:,,,,,                    {_uData.TasksWorkStatistics.GetCreatedTasks()}");
-                sb.AppendLine($"Workers Avarage Pricessing time:,,,,,  {_uData.TasksWorkStatistics.GetLastAvarageProcessingTime()}")
+                sb.AppendLine($"Finished Tasks:,,,,,                   {_uData.TasksWorkStatistics.GetFinishedTasks() }")
+                .AppendLine($"Created Tasks:,,,,,                    {_uData.TasksWorkStatistics.GetCreatedTasks()}")
+                .AppendLine($"Workers Avarage Pricessing time:,,,,,  {_uData.TasksWorkStatistics.GetLastAvarageProcessingTime()}")
                 .AppendLine($"Workers Avarage Waiting Time:,,,,,     {_uData.TasksWorkStatistics.GetLastAvarageWaitingTime()}")
                 .AppendLine($"Workers Avarage Execution Time:,,,,,   {_uData.TasksWorkStatistics.GetLastAvarageExecutionTime()}")
                 .AppendLine($"Workers Avarage Parsent Of Wait:,,,,,  {_uData.TasksWorkStatistics.GetParsentOfWaitTime()}")
                 .AppendLine($"Workers Parsent Of Work Time:,,,,,     {_uData.TasksWorkStatistics.GetParsentOfworkTime() * 100}%")
                 .AppendLine($"Workers Avarage Efficiency:,,,,,       {_uData.WorkersStatistics.GetLastAvarageWorkersEfficiency()}")
-                .AppendLine($"Total Workers:,,,,,                    {_uData.WorkersStatistics.GetNumberOfTotalWorkers()}");
+                .AppendLine($"Total Workers:,,,,,                    {_uData.WorkersStatistics.GetNumberOfTotalWorkers()}")
+                .AppendLine($"GetAvarageUtilizationPerWorker:,,,,,   {_uData.WorkerStatisticsGrouping.GetAvarageUtilizationPerWorker()}")
+                .AppendLine($"GetAvarageQueuePerWorker:,,,,,         {_uData.WorkerStatisticsGrouping.GetAvarageQueuePerWorker()}")
+                .AppendLine($"GetAvarageWaitingTimePerWorker:,,,,,   {_uData.WorkerStatisticsGrouping.GetAvarageWaitingTimePerWorker()}");
 
             return sb.ToString();
         }
@@ -109,14 +111,8 @@ namespace TaskSimulation.Results
         public string GenerateSystem()
         {
             var sb = new StringBuilder();
-            _uData.SystemUtilizationStatistics.AddLastValue();
-            var systemUtilization = _uData.SystemUtilizationStatistics.GetSystemUtilization();
-
             var systemUtilization2 = _uData.SystemUtilizationStatistics2.GetSystemUtilization();
             var avarageSystemUtilization2 = _uData.SystemUtilizationStatistics2.GetAvarageSystemUtilization();
-
-            var avarageSystemUtilization = _uData.SystemUtilizationStatistics.GetAvarageSystemUtilization();
-            var data = _uData.SystemUtilizationStatistics.GetData();
 
             sb.AppendLine($"System Utilization = (Number of working workers/ Num of workers) ");
             sb.AppendLine($"Avarage System Utilization = Avarage of System Utilization");

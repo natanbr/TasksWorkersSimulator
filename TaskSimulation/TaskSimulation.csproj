@@ -61,10 +61,11 @@
     <Compile Include="ChooseAlgorithms\IChooseWorkerAlgo.cs" />
     <Compile Include="Results\DebugSimpleOutput.cs" />
     <Compile Include="Results\ResultsFile.cs" />
-    <Compile Include="Results\SystemUtilizationStatistics.cs" />
     <Compile Include="Results\SystemUtilizationStatistics2.cs" />
+    <Compile Include="Results\WorkerData.cs" />
     <Compile Include="Results\WorkersStatistics.cs" />
     <Compile Include="Results\TasksWorkStatistics.cs" />
+    <Compile Include="Results\WorkersStatisticsGrouping.cs" />
     <Compile Include="Simulator\Events\IPeriodicEvent.cs" />
     <Compile Include="Simulator\Events\TaskArrivalPeriodicEvent.cs" />
     <Compile Include="Simulator\Events\WorkerArrivalPeriodicEvent.cs" />

@@ -16,10 +16,10 @@ namespace TaskSimulation.Results
 
         private readonly List<Tuple<double, int>> _workersCount;
         private readonly List<Tuple<double, int>> _workersLeft;
-        private Dictionary<Worker, Utilization.WorkerData> _workers;
+        private Dictionary<Worker, WorkerData> _workers;
         private int _numberOfWorkersBefore;
 
-        public WorkersStatistics(Dictionary<Worker, Utilization.WorkerData> workers)
+        public WorkersStatistics(Dictionary<Worker, WorkerData> workers)
         {
             _avarageWorkersEfficiency = new List<Tuple<double, double>>
             {
@@ -127,7 +127,7 @@ namespace TaskSimulation.Results
             var newAvarage = LMath.Average(prevAvarage, _numberOfWorkersBefore, deltaInWorkersAvarage, _workers.Count);
 
             if (newAvarage > 1)
-                Log.Err("ASDFASDF");
+                Log.Err("Error");
 
             data.AvarageEfficiency = newWorkerAverageEfficiency;
             data.TimeAlive = task.EndTime;
@@ -137,7 +137,7 @@ namespace TaskSimulation.Results
             _avarageWorkersEfficiency.Add(new Tuple<double, double>(task.EndTime, newAvarage));
         }
 
-        private Utilization.WorkerData GetWorkersData(Worker worker)
+        private WorkerData GetWorkersData(Worker worker)
         {
             var hasKey = _workers.ContainsKey(worker);
             if (hasKey)

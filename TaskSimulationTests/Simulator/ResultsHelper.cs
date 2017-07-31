@@ -17,7 +17,7 @@ namespace TaskSimulationTests.Simulator
         static int _initialNumOfWorkers = 10;
         static double _maxSimulationTime = 10;
 
-        private SimulateServer _simulator;
+        private static SimulateServer _simulator;
 
         public static void GenerateShema()
         {
@@ -49,7 +49,7 @@ namespace TaskSimulationTests.Simulator
         }
 
 
-        public Utilization SingleExecution()
+        public static SimulateServer SingleExecution()
         {
             _simulator = new SimulateServer(_maxSimulationTime);
 
@@ -61,7 +61,7 @@ namespace TaskSimulationTests.Simulator
             Log.I();
             Log.I();
 
-            return _simulator.GetResults();
+            return _simulator;
         } 
     }
 }
