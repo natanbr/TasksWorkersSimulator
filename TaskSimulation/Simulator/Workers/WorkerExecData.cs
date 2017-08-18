@@ -3,7 +3,7 @@ using TaskSimulation.Simulator.Tasks;
 
 namespace TaskSimulation.Results
 {
-    public class WorkerStatistics
+    public class WorkerExecData
     {
         public double StartAt { get; set; }
         public double EndAt { get; set; }
@@ -39,7 +39,7 @@ namespace TaskSimulation.Results
             }
         }
 
-        public WorkerStatistics()
+        public WorkerExecData()
         {
             StartAt = 0;
             EndAt = -1;

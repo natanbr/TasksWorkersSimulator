@@ -28,8 +28,8 @@ namespace TaskSimulation.Distribution
         {
             var execData = shema.Executions[execution];
             TaskArrivalRate = ReflectIContinuousDistribution.GetDistribution(execData.TaskArrivalRate.Type, execData.TaskArrivalRate.Params, GlobalRandom);
-            WorkerArrivalRate = ReflectIContinuousDistribution.GetDistribution(execData.WorkerArrivalRate.Type, execData.TaskArrivalRate.Params, GlobalRandom);
-            WorkerLeaveRate = ReflectIContinuousDistribution.GetDistribution(execData.WorkerLeaveRate.Type, execData.TaskArrivalRate.Params, GlobalRandom);
+            WorkerArrivalRate = ReflectIContinuousDistribution.GetDistribution(execData.WorkerArrivalRate.Type, execData.WorkerArrivalRate.Params, GlobalRandom);
+            WorkerLeaveRate = ReflectIContinuousDistribution.GetDistribution(execData.WorkerLeaveRate.Type, execData.WorkerLeaveRate.Params, GlobalRandom);
 
             var wqd = execData.WorkersQualityDistribution;
             WorkersQualityDistribution = new WorkersQualityDistribution()
@@ -38,8 +38,8 @@ namespace TaskSimulation.Distribution
                 FeedbackStd = ReflectIContinuousDistribution.GetDistribution (wqd.FeedbackStd.Type,     wqd.FeedbackStd.Params,     GlobalRandom),
                 QualityMean = ReflectIContinuousDistribution.GetDistribution (wqd.QualityMean.Type,     wqd.QualityMean.Params,     GlobalRandom),
                 QualityStd = ReflectIContinuousDistribution.GetDistribution  (wqd.QualityStd.Type,      wqd.QualityStd.Params,      GlobalRandom),
-                ResponseMean = ReflectIContinuousDistribution.GetDistribution(wqd.ResponseTimeMean.Type,wqd.ResponseTimeMean.Params,GlobalRandom),
-                ResponseStd = ReflectIContinuousDistribution.GetDistribution (wqd.ResponseTimeStd.Type, wqd.ResponseTimeStd.Params, GlobalRandom),
+                ProcessingMean = ReflectIContinuousDistribution.GetDistribution(wqd.ProcessingTimeMean.Type,wqd.ProcessingTimeMean.Params,GlobalRandom),
+                ProcessingStd = ReflectIContinuousDistribution.GetDistribution (wqd.ProcessingTimeStd.Type, wqd.ProcessingTimeStd.Params, GlobalRandom),
             };
 
             return WorkersQualityDistribution.Validate();
@@ -50,6 +50,8 @@ namespace TaskSimulation.Distribution
         public IContinuousDistribution WorkerLeaveRate { get; private set; }
 
         public IGradeCalcAlgo GradeSystem { get; set; }
+        public IChooseWorkerAlgo GradeSystemChooseMethod { get; set; }
+
 
         public WorkersQualityDistribution WorkersQualityDistribution { get; private set; }
 

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace TaskSimulation
 {
@@ -12,7 +9,9 @@ namespace TaskSimulation
 
         public static Log Instance { get { return _logInstance = _logInstance ?? new Log(); } }
 
-        private Log() { }
+        private Log()
+        {
+        }
 
         public void Info(string msg, ConsoleColor color)
         {
@@ -22,7 +21,7 @@ namespace TaskSimulation
             Console.ForegroundColor = before;
         }
 
-        public void Debug(string msg, ConsoleColor color)
+        private void Debug(string msg, ConsoleColor color)
         {
             Info(msg, color);
         }
@@ -34,7 +33,9 @@ namespace TaskSimulation
 
         public static void D(string msg = "", ConsoleColor color = ConsoleColor.DarkGray)
         {
+#if DEBUG
             Instance.Debug(msg, color);
+#endif
         }
 
         public static void Event(string msg = "")

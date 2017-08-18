@@ -37,18 +37,19 @@ namespace TaskSimulationTests.Simulator
                 FeedbackStd = new ContinuousUniform(1, 2),
                 QualityMean = new ContinuousUniform(1, 10),
                 QualityStd = new ContinuousUniform(1, 2),
-                ResponseMean = new ContinuousUniform(3,3),
-                ResponseStd = new ContinuousUniform(0.01,0.01)
+                ProcessingMean = new ContinuousUniform(3,3),
+                ProcessingStd = new ContinuousUniform(0.01,0.01)
             });
 
             SimDistribution.I.GradeSystem = new OriginalGradeCalc();
+            SimDistribution.I.GradeSystemChooseMethod = SimDistribution.I.GradeSystem.ChooseMethod();
 
             var executionSummary = SingleExecution();
 
-            Assert.AreEqual(100, executionSummary.TotalWorkersUtilization *100); //%
-            Assert.AreEqual(100, executionSummary.FinishedTasksForSingleExecution * 100);  //%
-            Assert.AreEqual(Math.Round(4.98 / 8.98, 3), Math.Round(executionSummary.TotalTasksWait, 3));
-            Assert.AreEqual(5, executionSummary.TotalTasksForSingleExecution);
+            //Assert.AreEqual(100, executionSummary.TotalWorkersUtilization *100); //%
+            Assert.AreEqual(100, executionSummary.TasksWorkStatistics.GetFinishedTasks() * 100);  //%
+            Assert.AreEqual(Math.Round(4.98 / 8.98, 3), Math.Round(executionSummary.TasksWorkStatistics.TaskWereInWaitList(), 3));
+            Assert.AreEqual(5, executionSummary.TasksWorkStatistics.GetCreatedTasks());
         }
 
         [TestMethod()]
@@ -67,11 +68,13 @@ namespace TaskSimulationTests.Simulator
                 FeedbackStd = new ContinuousUniform(1, 2),
                 QualityMean = new ContinuousUniform(1, 10),
                 QualityStd = new ContinuousUniform(1, 2),
-                ResponseMean = new ContinuousUniform(3, 3),
-                ResponseStd = new ContinuousUniform(0.1, 0.1)
+                ProcessingMean = new ContinuousUniform(3, 3),
+                ProcessingStd = new ContinuousUniform(0.1, 0.1)
             });
 
             SimDistribution.I.GradeSystem = new OriginalGradeCalc();
+            SimDistribution.I.GradeSystemChooseMethod = SimDistribution.I.GradeSystem.ChooseMethod();
+
             var executionSummary = SingleExecution();
         }
 
@@ -92,15 +95,18 @@ namespace TaskSimulationTests.Simulator
                 FeedbackStd = new ContinuousUniform(0.0001, 0.0001, SimDistribution.I.GlobalRandom),
                 QualityMean = new ContinuousUniform(3, 3, SimDistribution.I.GlobalRandom),
                 QualityStd = new ContinuousUniform(0.0001, 0.0001, SimDistribution.I.GlobalRandom),
-                ResponseMean = new ContinuousUniform(3, 3, SimDistribution.I.GlobalRandom),
-                ResponseStd = new ContinuousUniform(0.1, 0.1, SimDistribution.I.GlobalRandom)
+                ProcessingMean = new ContinuousUniform(3, 3, SimDistribution.I.GlobalRandom),
+                ProcessingStd = new ContinuousUniform(0.1, 0.1, SimDistribution.I.GlobalRandom)
             });
+
+            SimDistribution.I.GradeSystem = new OriginalGradeCalc();
+            SimDistribution.I.GradeSystemChooseMethod = SimDistribution.I.GradeSystem.ChooseMethod();
 
             var executionSummary = SingleExecution();
 
-            Assert.AreEqual((int)((0 / 23.5) * 100), (int)(executionSummary.TotalWorkersUtilization * 100), "TotalWorkersUtilization");
-            Assert.AreEqual(0, executionSummary.FinishedTasksForSingleExecution, "FinishedTasksForSingleExecution");
-            Assert.AreEqual(10, executionSummary.TotalTasksForSingleExecution, "TotalTasksForSingleExecution");
+            //Assert.AreEqual((int)((0 / 23.5) * 100), (int)(executionSummary.TotalWorkersUtilization * 100), "TotalWorkersUtilization");
+            Assert.AreEqual(6, executionSummary.TasksWorkStatistics.GetFinishedTasks(), "FinishedTasksForSingleExecution");
+            Assert.AreEqual(10, executionSummary.TasksWorkStatistics.GetCreatedTasks(), "TotalTasksForSingleExecution");
         }
 
         [TestMethod()]
@@ -138,7 +144,7 @@ namespace TaskSimulationTests.Simulator
             Assert.AreNotEqual(s1 + s2 + s3 + s4, s5 + s6 + s7 + s8);
         }
 
-        public ExecutionSummary SingleExecution()
+        public Utilization SingleExecution()
         {
             var simulator = new SimulateServer(_maxSimulationTime);
 
@@ -150,18 +156,20 @@ namespace TaskSimulationTests.Simulator
             Log.I();
             Log.I();
 
-            var executionStatistics = new ExecutionSummary()
+            return simulator.GetResults();
+
+            /*var executionStatistics = new ExecutionSummary()
             {
                 ExecutionTime = _maxSimulationTime,
 
-                TotalWorkersUtilization = simulator.Utilization.GetTotalWorkersUtilization(),
-                TotalSystemUtilization = simulator.Utilization.GetSystemUtilization(),
-                TotalTasksWait = simulator.Utilization.TaskWereInWaitList(),
-                FinishedTasksForSingleExecution = simulator.Utilization.GetNumberOfFinishedTasks(),
-                TotalTasksForSingleExecution = simulator.Utilization.GetNumberOfTotalTasks(),
+                //TotalWorkersUtilization = simulator.Utilization.GetTotalWorkersUtilization(),
+                //TotalSystemUtilization = simulator.Utilization.GetSystemUtilization(),
+                TotalTasksWait = simulator.Utilization.TasksWorkStatistics.TaskWereInWaitList(),
+                FinishedTasksForSingleExecution = simulator.Utilization.TasksWorkStatistics.GetFinishedTasks(),
+                TotalTasksForSingleExecution = simulator.Utilization.TasksWorkStatistics.GetCreatedTasks(),
             };
 
-            return executionStatistics;
+            return executionStatistics;*/
         } 
     }
 }

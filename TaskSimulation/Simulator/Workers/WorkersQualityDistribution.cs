@@ -10,14 +10,14 @@ namespace TaskSimulation.Simulator.Workers
         public IContinuousDistribution QualityMean { get; set; }
         public IContinuousDistribution QualityStd { get; set; }
 
-        public IContinuousDistribution ResponseMean { get; set; }
-        public IContinuousDistribution ResponseStd { get; set; }
+        public IContinuousDistribution ProcessingMean { get; set; }
+        public IContinuousDistribution ProcessingStd { get; set; }
 
         public bool Validate()
         {
             return FeedbackMean != null && FeedbackStd != null &&
                    QualityMean != null && QualityStd != null &&
-                   ResponseMean != null && ResponseStd != null;
+                   ProcessingMean != null && ProcessingStd != null;
         }
 
         public WorkerQualies GenerateQualies()
@@ -25,7 +25,7 @@ namespace TaskSimulation.Simulator.Workers
             return new WorkerQualies(
                 FeedbackMean.Sample(), FeedbackStd.Sample(), 
                 QualityMean.Sample(), QualityStd.Sample(),
-                ResponseMean.Sample(), ResponseStd.Sample());
+                ProcessingMean.Sample(), ProcessingStd.Sample());
         }
     }
 }

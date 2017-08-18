@@ -42,9 +42,11 @@ namespace TaskSimulationCmd
 
             var executions = execData.Executions.Length;
             _summaries = new ExecutionSummary[executions];
-            
+
             // TODO move grade system to file
-            SimDistribution.I.GradeSystem = new OriginalGradeCalc();
+            //SimDistribution.I.GradeSystem = new OriginalGradeCalc();
+            SimDistribution.I.GradeSystem = new QueueLengthGradeCalc();
+            SimDistribution.I.GradeSystemChooseMethod = SimDistribution.I.GradeSystem.ChooseMethod();
 
             for (var i = 0; i < executions; i++)
             {
@@ -63,20 +65,20 @@ namespace TaskSimulationCmd
                 Log.I($"------------ Simulation Execution {i} ------------", ConsoleColor.DarkCyan);
 
                 _stopwatch.Restart();
-                _summaries[i] = SingleExecution(maxSimulationTime, initialNumOfWorkers);
+                SingleExecution(maxSimulationTime, initialNumOfWorkers);
                 _stopwatch.Stop();
 
-                Log.I($"Execution -{i}- Runtime: {_stopwatch.Elapsed, -5:##.##}", ConsoleColor.Blue);
+                Log.I($"Execution -{i}- Runtime: {_stopwatch.Elapsed}", ConsoleColor.Blue);
                 Log.I();
 
             }
 
             Log.I();
             Log.I("----------- Print Results ----------- ", ConsoleColor.Blue);
-            _summaries.ToList().ForEach(v => Log.I(v.ToString()));
+            //_summaries.ToList().ForEach(v => Log.I(v.ToString()));
         }
 
-        public static ExecutionSummary SingleExecution(double time, long workers)
+        public static string SingleExecution(double time, long workers)
         {
             var simulator = new SimulateServer(time);
 
@@ -88,18 +90,10 @@ namespace TaskSimulationCmd
             Log.I();
             Log.I("----------- Post execution calculations ----------- ", ConsoleColor.Blue);
 
-            var executionStatistics = new ExecutionSummary()
-            {
-                ExecutionTime = time,
-
-                TotalWorkersUtilization = simulator.Utilization.GetTotalWorkersUtilization(),
-                TotalSystemUtilization = simulator.Utilization.GetSystemUtilization(),
-                FinishedTasksForSingleExecution = simulator.Utilization.GetNumberOfFinishedTasks(),
-                TotalTasksForSingleExecution = simulator.Utilization.GetNumberOfTotalTasks(),
-                TotalTasksWait = simulator.Utilization.TaskWereInWaitList()
-            };
-
-            return executionStatistics;
+            var rf = new ResultsFile($"test_{DateTime.Now.ToFileTime()}.csv", simulator.GetResults());
+            rf.GenerateCsvFile();
+            
+            return rf.GenerateSummery();
         }
 
         private static InputXmlShema LoadInputFile(string[] args)

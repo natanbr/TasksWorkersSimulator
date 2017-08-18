@@ -1,136 +1,69 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TaskSimulation.Simulator;
 using TaskSimulation.Simulator.Events;
 using TaskSimulation.Simulator.Tasks;
 using TaskSimulation.Simulator.Workers;
 
-//using Task = TaskSimulation.Simulator.Task;
-
 namespace TaskSimulation.Results
 {
     public class Utilization : ISimulatable
     {
         private readonly List<Task> _tasks;
-        private readonly List<Worker> _workers;
+        //private readonly List<Worker> _workers;
+        private readonly Dictionary<Worker, WorkerData> _workers;
+
+        public TasksWorkStatistics TasksWorkStatistics { get; set; }
+        public WorkersStatistics WorkersStatistics { get; set; }
+        public SystemUtilizationStatistics2 SystemUtilizationStatistics2 { get; set; }
+        public WorkersStatisticsGrouping WorkerStatisticsGrouping { get; set; }
+
 
         public Utilization()
         {
             _tasks = new List<Task>();
-            _workers = new List<Worker>();
-        }
+            _workers = new  Dictionary<Worker, WorkerData>();//List<Worker>();
 
-        public void AddWorkers(List<Worker> workers)
-        {
-            _workers.AddRange(workers);
-        }
-
-        public void AddTasks(List<Task> tasks)
-        {
-            _tasks.AddRange(tasks);
+            TasksWorkStatistics = new TasksWorkStatistics(_tasks);
+            WorkersStatistics = new WorkersStatistics(_workers);
+            SystemUtilizationStatistics2 = new SystemUtilizationStatistics2();
+            WorkerStatisticsGrouping = new WorkersStatisticsGrouping();
         }
 
         public void Update(TaskArrivalEvent @event)
         {
             _tasks.Add(@event.Task);
+            UpdateSubscribers(@event);
         }
 
-        public void Update(TaskFinishedEvent @event) { }
+        public void Update(TaskFinishedEvent @event)
+        {
+            UpdateSubscribers(@event);
+        }
 
         public void Update(WorkerArrivalEvent @event)
         {
-            _workers.Add(@event.Worker);
+            _workers.Add(@event.Worker, new WorkerData());
+            UpdateSubscribers(@event);
         }
 
-        public void Update(WorkerLeaveEvent @event) { }
-
-        private double GetWorkersWorkedTime()
+        public void Update(WorkerLeaveEvent @event)
         {
-            var sumWorkersWorkedTime = _workers.Sum(w =>
-            {
-                // The last not finished task
-                var lastTask = (w.IsWorking && w.IsOnline()) ? SimulateServer.SimulationClock - w.GetCurrentTask().StartTime : 0;
-
-                return w.Statistics.BusyTime + lastTask;
-            });
-
-            return sumWorkersWorkedTime;
+            UpdateSubscribers(@event);
         }
 
-        public int GetNumberOfFinishedTasks()
+        private void UpdateSubscribers<T>(T @event)
         {
-            var totalTasksFinished = _tasks.Count(t => t.EndTime != Task.NOT_STARTED);
-            Log.I($"Total Task finished = {totalTasksFinished}");
-            return totalTasksFinished;
+            (@event as AEvent)?.Accept(TasksWorkStatistics);
+            (@event as AEvent)?.Accept(WorkersStatistics);
+            (@event as AEvent)?.Accept(SystemUtilizationStatistics2);
+            (@event as AEvent)?.Accept(WorkerStatisticsGrouping);
         }
 
-        public int GetNumberOfTotalTasks()
-        {
-            var totalTasks = _tasks.Count;
-            Log.I($"Total Task = {totalTasks}");
-            return totalTasks;
-        }
 
-        public double GetTotalWorkersUtilization()
-        {
-            var sumWorkersBusy = GetWorkersWorkedTime();
-            Log.I($"(S=Start time, E=End time, B=Busy time, T=Total existing time");
-            var workersTotalTime = _workers.Sum(w =>
-            {
-                Log.I($"{w} (S:{w.Statistics.StartAt,-6:#0.###}, E:{w.Statistics.EndAt,-6:#0.###}) B:{w.Statistics.BusyTime,-6:#0.###} T:{w.Statistics.TotalTime,-6:#0.###}");
-                return w.Statistics.TotalTime;
-            });
 
-            var workerUtilization = sumWorkersBusy / workersTotalTime;
-            Log.I($"Workers utilization is (sum workers work time)/(sum workers work time)= workerUtilization");
-            Log.I($"Workers utilization is {sumWorkersBusy}/{workersTotalTime} = {workerUtilization*100:N2}%");
-            return workerUtilization;
-        }
 
-        /// <summary>
-        /// (Total time the workers worked/Number of workers)/Simulation Run time = Utiliztion
-        /// If all the workers were working all the time, the system utilization has been 100%
-        /// </summary>
-        /// <returns></returns>
-        public double GetSystemUtilization()
-        {
-            var sumWorkersWorkedTime = GetWorkersWorkedTime();
-
-            var systemUtilization = (sumWorkersWorkedTime /_workers.Count)/SimulateServer.SimulationClock;
-
-            Log.I($"System utilization is: (sum Workers Worked Time/#workers)/Simulation Final Time");
-            Log.I($"System utilization is: " +
-                  $"({sumWorkersWorkedTime}/{_workers.Count})/{SimulateServer.SimulationClock} = {systemUtilization * 100:N2}%");
-            return systemUtilization;
-        }
-
-        public double TaskWereInWaitList()
-        {
-            var sumTasksWaitTime = _tasks.Sum(t =>
-            {
-                if (t.StartTime != -1)
-                    return t.StartTime - t.CreatedTime;
-
-                // Task was not finished
-                return SimulateServer.SimulationClock - t.CreatedTime;
-            });
-
-            var sumTasksExistsTime = _tasks.Sum(t =>
-            {
-                if (t.EndTime != -1)
-                    return t.EndTime - t.CreatedTime;
-                
-                // Task was not finished
-                return SimulateServer.SimulationClock - t.CreatedTime;
-            });
-
-            var total = sumTasksWaitTime / sumTasksExistsTime;
-
-            Log.I($"Task were waiting: (tasks sum wait time) / (sum of time tasks exists)");
-            Log.I($"Task were waiting: " +
-                  $"{sumTasksWaitTime}/{sumTasksExistsTime} = {total * 100:N2}%");
-            return total;
-        }
+        
+        
     }
 }

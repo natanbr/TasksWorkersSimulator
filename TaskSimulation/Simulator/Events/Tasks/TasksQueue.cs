@@ -16,6 +16,11 @@ namespace TaskSimulation.Simulator.Tasks
             _queuedTasks.Add(task);
         }
 
+        public int Count()
+        {
+            return _queuedTasks.Count;
+        }
+
         public void Remove(Task task)
         {
             _queuedTasks.Remove(task);
@@ -27,6 +32,11 @@ namespace TaskSimulation.Simulator.Tasks
                 return null;
 
             return _queuedTasks[0];
+        }
+
+        public List<Task> ToList()
+        {
+            return _queuedTasks;
         }
 
         public bool HasAvailableTask()

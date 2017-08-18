@@ -9,12 +9,14 @@ namespace TaskSimulation.Simulator
     public class SimulateServer
     {
         public static double SimulationClock { get; private set; } // TNOW
-
-        private TasksJournal _tasksJournal;
-        private WorkersJournal _workersJournal;
         public static double SimulatorMaxRunTime { get; private set; }
+
+
+        private readonly TasksJournal _tasksJournal;
+        private readonly WorkersJournal _workersJournal;
         private readonly SimulationEventMan _simulationEvents;
-        public Utilization Utilization { get; private set; }
+        private readonly Utilization _utilization;// { get; private set; }
+        private readonly DebugSimpleOutput _dbPrint;
 
         public SimulateServer(double maxSimulationTime = Int32.MaxValue)
         {
@@ -22,7 +24,10 @@ namespace TaskSimulation.Simulator
             SimulationClock = 0;
             SimulatorMaxRunTime = maxSimulationTime;
             
-            Utilization = new Utilization();
+            _utilization = new Utilization();
+            _tasksJournal = new TasksJournal();
+            _workersJournal = new WorkersJournal();
+            _dbPrint = new DebugSimpleOutput();
         }
 
         public void Initialize(long initialNumOfWorkers)
@@ -30,12 +35,7 @@ namespace TaskSimulation.Simulator
             Log.D("* * * * * * * Init * * * * * * *");
             Task.TASK_ID = 0;
 
-            _simulationEvents.InitializeGenesisEvents();
-
-            _tasksJournal = new TasksJournal();
-
-            _workersJournal = new WorkersJournal();
-            //Utilization.AddWorkers(_workersJournal.ActiveWorkers);
+            _simulationEvents.InitializeGenesisEvents(1, initialNumOfWorkers);
 
             Log.D("* * * * * * * Init * * * * * * *");
         }
@@ -52,7 +52,7 @@ namespace TaskSimulation.Simulator
 
                 SimulationClock = nextEvent.ArriveTime;
                 Log.I();
-                Log.Event( $"{nextEvent} at time {SimulationClock,-5:##.##}");
+                Log.Event( $"{nextEvent} at time {SimulationClock,-5:#0.##}");
 
                 if (nextEvent is TaskArrivalEvent || nextEvent is TaskFinishedEvent)
                 {
@@ -65,16 +65,30 @@ namespace TaskSimulation.Simulator
                     nextEvent.Accept(_tasksJournal);
                 }
 
-                nextEvent.Accept(Utilization);
+                nextEvent.Accept(_utilization);
+                nextEvent.Accept(_dbPrint);
 
                 #if DEBUG
                 PrintSimulationState();
                 #endif
 
                 nextEvent = _simulationEvents.GetNextEvent();
+
             }
 
-            PrintSimulationState();
+            //Log.D(_dbPrint.ToString());
+
+            //PrintSimulationState();
+        }
+
+        public Utilization GetResults()
+        {
+            return _utilization;
+        }
+
+        public string GetShortOutput()
+        {
+            return _dbPrint.ToString();
         }
 
         public void PrintSimulationState()

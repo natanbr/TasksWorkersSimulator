@@ -4,11 +4,7 @@ namespace TaskSimulation.Simulator
 {
     public interface ISimulatable
     {
-        /// <summary>
-        /// Update on Simulation step
-        /// </summary>
-        //void Update();
-
+        // void Update<T>(T @event); TODO
         void Update(TaskArrivalEvent @event);
         void Update(TaskFinishedEvent @event);
         void Update(WorkerArrivalEvent @event);

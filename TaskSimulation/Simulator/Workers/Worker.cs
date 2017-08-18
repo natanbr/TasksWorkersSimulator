@@ -1,4 +1,5 @@
-﻿using TaskSimulation.Distribution;
+﻿using System.Collections.Generic;
+using TaskSimulation.Distribution;
 using TaskSimulation.Results;
 using TaskSimulation.Simulator.Tasks;
 
@@ -6,30 +7,25 @@ namespace TaskSimulation.Simulator.Workers
 {
     public class Worker
     {
-        private long ID;
+        private readonly long _id;
         private readonly TasksQueue _tasks;
         public Grade Grade { get; set; }
-        public WorkerStatistics Statistics { get; set; }
+        public WorkerExecData Statistics { get; set; }
         public WorkerDistribution Distribution { get; set; }
         public bool IsWorking { get; private set; } = false;
 
         public Worker(long id, WorkerQualies qualies)
         {
-            ID = id;
+            _id = id;
             _tasks = new TasksQueue();
-            Statistics = new WorkerStatistics();
+            Statistics = new WorkerExecData();
             Distribution = new WorkerDistribution(qualies);
+            Grade = SimDistribution.I.GradeSystem.InitialGrade();
+        }
 
-            // The F,Q,R... will be used for next calc, Grade will be used as initial grade 
-            Grade = new Grade()
-            {
-                FeedbackGrade = SimDistribution.I.GradeSystem.InitialGrade(),
-                QualityGrade = SimDistribution.I.GradeSystem.InitialGrade(),
-                ResponseGrade = SimDistribution.I.GradeSystem.InitialGrade(),
-                NumberOfTasksGrade = SimDistribution.I.GradeSystem.GetMaxNumberOfTasks(),
-            };
-
-            Grade.TotalGrade = SimDistribution.I.GradeSystem.GetFinalGrade(Grade);
+        public long GetWorkerID()
+        {
+            return _id;
         }
 
         public void AddTask(Task task)
@@ -54,9 +50,8 @@ namespace TaskSimulation.Simulator.Workers
             IsWorking = false;
 
             Statistics.UpdateWorkedTime(task);
-           
-            Grade = SimDistribution.I.GradeSystem.UpdateOnTaskRemoved(Grade, time - task.StartTime);
-            Grade = SimDistribution.I.GradeSystem.GenerateRandomGrade(this);
+
+            Grade = SimDistribution.I.GradeSystem.UpdateOnTaskRemoved(this, task);
 
             // Start work on the next task
             ContinueToNextTask();
@@ -64,7 +59,7 @@ namespace TaskSimulation.Simulator.Workers
 
         public override string ToString()
         {
-            return $"Worker: {ID,-3:##}";
+            return $"Worker: {_id,-3:##}";
         }
 
         private void ContinueToNextTask()
@@ -82,6 +77,21 @@ namespace TaskSimulation.Simulator.Workers
         public Task GetCurrentTask()
         {
             return _tasks.GetFirst();
+        }
+
+        public List<Task> GetQueue()
+        {
+            return _tasks.ToList();
+        }
+
+
+        /// <summary>
+        /// Get the number of task (including the working and the queue)
+        /// </summary>
+        /// <returns></returns>
+        public int GetNumberOfTasks()
+        {
+            return _tasks.Count();
         }
 
         public bool IsOnline()
