@@ -27,6 +27,8 @@ namespace TaskSimulation.Results
             _sw.WriteLine(GenerateAvarageWorkerTime());
             _sw.WriteLine();
             _sw.WriteLine(GenerateSystem());
+            _sw.WriteLine();
+            _sw.WriteLine(MoreData());
             _sw.Close();
         }
 
@@ -36,19 +38,23 @@ namespace TaskSimulation.Results
             sb.AppendLine($"Execution");
                 //.AppendLine($"Workers Utilization:,              {_uData.GetTotalWorkersUtilization() * 100:N2}%")
                 //.AppendLine($"System Utilization: ,            {_uData.GetSystemUtilization() * 100:N2}%")
-                sb.AppendLine($"Finished Tasks:,,,,,                   {_uData.TasksWorkStatistics.GetFinishedTasks() }")
+            sb.AppendLine($"Finished Tasks:,,,,,                   {_uData.TasksWorkStatistics.GetFinishedTasks()}")
                 .AppendLine($"Created Tasks:,,,,,                    {_uData.TasksWorkStatistics.GetCreatedTasks()}")
-                .AppendLine($"Workers Avarage Pricessing time:,,,,,  {_uData.TasksWorkStatistics.GetLastAvarageProcessingTime()}")
-                .AppendLine($"Workers Avarage Waiting Time:,,,,,     {_uData.TasksWorkStatistics.GetLastAvarageWaitingTime()}")
-                .AppendLine($"Workers Avarage Execution Time:,,,,,   {_uData.TasksWorkStatistics.GetLastAvarageExecutionTime()}")
-                .AppendLine($"Workers Avarage Parsent Of Wait:,,,,,  {_uData.TasksWorkStatistics.GetParsentOfWaitTime()}")
-                .AppendLine($"Workers Parsent Of Work Time:,,,,,     {_uData.TasksWorkStatistics.GetParsentOfworkTime() * 100}%")
-                .AppendLine($"Workers Avarage Efficiency:,,,,,       {_uData.WorkersStatistics.GetLastAvarageWorkersEfficiency()}")
-                .AppendLine($"Total Workers:,,,,,                    {_uData.WorkersStatistics.GetNumberOfTotalWorkers()}")
-                .AppendLine($"GetAvarageUtilizationPerWorker:,,,,,   {_uData.WorkerStatisticsGrouping.GetAvarageUtilizationPerWorker()}")
-                .AppendLine($"GetAvarageQueuePerWorker:,,,,,         {_uData.WorkerStatisticsGrouping.GetAvarageQueuePerWorker()}")
-                .AppendLine($"GetAvarageWaitingTimePerWorker:,,,,,   {_uData.WorkerStatisticsGrouping.GetAvarageWaitingTimePerWorker()}");
-
+                .AppendLine(
+                    $"Workers Avarage Pricessing time:,,,,,  {_uData.TasksWorkStatistics.GetLastAvarageProcessingTime()}")
+                .AppendLine(
+                    $"Workers Avarage Waiting Time:,,,,,     {_uData.TasksWorkStatistics.GetLastAvarageWaitingTime()}")
+                .AppendLine(
+                    $"Workers Avarage Execution Time:,,,,,   {_uData.TasksWorkStatistics.GetLastAvarageExecutionTime()}")
+                .AppendLine(
+                    $"Workers Avarage Parsent Of Wait:,,,,,  {_uData.TasksWorkStatistics.GetParsentOfWaitTime()}")
+                .AppendLine(
+                    $"Workers Parsent Of Work Time:,,,,,     {_uData.TasksWorkStatistics.GetParsentOfworkTime()*100}%")
+                .AppendLine(
+                    $"Workers Avarage Efficiency:,,,,,       {_uData.WorkersStatistics.GetLastAvarageWorkersEfficiency()}")
+                .AppendLine(
+                    $"Total Workers:,,,,,                    {_uData.WorkersStatistics.GetNumberOfTotalWorkers()}");
+ 
             return sb.ToString();
         }
 
@@ -122,6 +128,20 @@ namespace TaskSimulation.Results
         }
 
 
+        public string MoreData()
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine($"GetAvarageUtilizationPerWorker")
+                .AppendLine(DictToCSVFormat(_uData.WorkerStatisticsGrouping.GetAvarageUtilizationPerWorker()))
+                .AppendLine($"GetAvarageQueuePerWorker")
+                .AppendLine(DictToCSVFormat(_uData.WorkerStatisticsGrouping.GetAvarageQueuePerWorker()))
+                .AppendLine($"GetAvarageWaitingTimePerWorker").
+                 AppendLine(DictToCSVFormat(_uData.WorkerStatisticsGrouping.GetAvarageWaitingTimePerWorker()));
+
+            return sb.ToString();
+
+        }
         private string ListToCSVFormat<TA1, TA2, TB2>(List<Tuple<TA1, TA2>> listA, List<Tuple<TA1, TB2>> listB)
         {
             var sb = new StringBuilder();
@@ -135,6 +155,18 @@ namespace TaskSimulation.Results
                     throw new Exception("un-synchronized results");
                 
                 sb.AppendLine($"{la.Item1},{la.Item2},{lb.Item2}");
+            }
+
+            return sb.ToString();
+        }
+
+        private string DictToCSVFormat<M,N>(Dictionary<M,N> data)
+        {
+            var sb = new StringBuilder();
+
+            foreach (var keyValuePair in data)
+            {
+                sb.AppendLine($"{keyValuePair.Key},{keyValuePair.Value}");
             }
 
             return sb.ToString();

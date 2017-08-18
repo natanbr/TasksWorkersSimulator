@@ -22,7 +22,7 @@ namespace TaskSimulation.Results
 
         private class WorkerData
         {
-            public double Queue { get; set; } = 0;
+            public int Queue { get; set; } = 0;
             public double StartTime { get; set; } = 0;
             public double EndTime { get; set; } = 0;
             public double Sum { get; set; } = 0;
@@ -37,8 +37,10 @@ namespace TaskSimulation.Results
         public void Update(WorkerArrivalEvent @event)
         {
             _workers.Add(@event.Worker);
-            _queueSum.Add(@event.Worker, new WorkerData());
-            _waitSum.Add(@event.Worker, new WorkerData());
+            if (!_queueSum.ContainsKey(@event.Worker))
+                _queueSum.Add(@event.Worker, new WorkerData());
+            if (!_waitSum.ContainsKey(@event.Worker))
+                _waitSum.Add(@event.Worker, new WorkerData());
         }
 
         public void Update(WorkerLeaveEvent @event)
@@ -82,6 +84,13 @@ namespace TaskSimulation.Results
             {
                 try
                 {
+                    if (!_waitSum.ContainsKey(worker))
+                        _waitSum.Add(worker, new WorkerData());
+
+                    if (!_queueSum.ContainsKey(worker))
+                        _queueSum.Add(worker, new WorkerData());
+
+
                     if (_queueSum[worker].Queue == 0)
                     {
                         _waitSum[worker].EndTime = time;
@@ -89,8 +98,8 @@ namespace TaskSimulation.Results
                         _waitSum[worker].Reset();
                     }
 
-                    _queueSum[existingWorker].Queue++;
-                    _queueSum[existingWorker].StartTime = time;
+                    _queueSum[worker].Queue++;
+                    _queueSum[worker].StartTime = time;
                 }
                 catch (Exception e)
                 {
